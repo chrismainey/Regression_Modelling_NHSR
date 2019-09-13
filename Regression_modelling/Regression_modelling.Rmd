@@ -1,0 +1,318 @@
+---
+title: "Regression Modelling in R"
+author: "Chris Mainey chris.mainey@uhb.nhs.uk"
+date: "2019/09/02 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    css: "libs/HED.css"
+    lib_dir: libs
+    seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+
+---
+class: center
+
+
+
+<br><br><br><br>
+
+## Regression Modelling in `R`
+
+<br>
+
+.pull-left[
+__Chris Mainey__
+<p style="font-size:26;")>Intelligence Analyst<br>
+<b>University Hospitals Birmingham 
+NHS Foundation Trust</b></p>
+<br>
+<span style="font-size:26;">[chris.mainey@uhb.nhs.uk](mailto:chris.mainey@uhb.nhs.uk)</span><br>
+`r icon::fa("twitter")` <a href="https://twitter.com/chrismainey?s=09" style="line-height:2;">@chrismainey</a>
+]
+
+.pull-right[
+<img src= "./man/figures/NHSR-logo.png" width=80% height=80%>
+<br><br>
+<img src= "./man/figures/HI.png" width=80% height=80%>
+]
+
+
+---
+
+# Workshop Overview
+
+- Correlation
+- Linear Regression
+ - Specifying a model with `lm`
+ - Interpreting the model output
+ - Assessing model fit
+- Multiple Regression
+- Prediction
+- Generalized Linear Models using `glm`)
+ - Logistic Regression
+ 
+--
+
+<br>
+___Mixture of theory, examples and practical exercises___
+
+---
+
+# Relationships between variables
+
+Correlation and regression are method of assessing relationships:
++
++ We are often concern about how variables relate to each other
++ Sometimes the effects of other variables interact/mask this ("confounding")
+- Correlation examines the relationship
+- Regression estimates how one variable, $x$ (or more), predicts another, $y$ .
+
+---
+
+```{r lmsetup, echo=FALSE,include=FALSE}
+set.seed(222)
+x <- rnorm(50, 10, 4)
+y <- runif(50, min = 0.5, 10) + (1.25*x)
+z <- predict(lm(y~x))
+set.seed(222)
+library(ggplot2)
+```
+
+## Example:
+```{r lm1, fig.retina= 2, fig.align="center", fig.height=5, fig.width=6}
+x <- rnorm(50, 10, 4)
+y <- runif(50, min = 0.5, 10) + (1.25*x)
+
+a<-ggplot(data.frame(x,y,z), aes(x=x,y=y))+
+  geom_point(col="dodgerblue2", alpha=0.65)
+a
+```
+
+---
+
+# Correlation
+
+- Measured with a correlation coefficient.
+ - 'Pearson' is the most common
+
+- Range:
+ - -1 Perfect Negative Correlation
+ - 0 No Correlation
+ - 1 Perfect positive Correlation
+<br><br>
+ 
+![](./man/figures/correlation-examples.svg)
+
+
+.footnote[
+Graphic from:
+Pierce, Rod,  2018, 'Correlation', Math Is Fun, Available at: <http://www.mathsisfun.com/data/correlation.html>. [Accessed 8 Jul 2019]
+]
+---
+
+# Correlation in R
+
+Lets check the correlation in our generated data:
+
+```{r correlation}
+cor(x, y)
+
+cor.test(x,y)
+
+```
+
++ `cor.test` is a correlation and a t-test.
++ different types of correlation coefficient, default is 'Pearson'
++ Doesn't work for different distributions, data types or more variables
+
+---
+
+## Regression models (1)
+
+Regression is a more advance technique that gives us more options than correlation.
+A linear regression is built with `lm`:
+```{r lm3, fig.retina=2, fig.align="center", fig.height=4, fig.width=5}
+z <- lm(y~x)
+
+a<- a + geom_smooth(method="lm", col="red", linetype=2)
+a
+```
+
+
+$$\large{y= \alpha + \beta x + \epsilon}$$
+
+---
+
+### Ordinary Least Squares 'OLS'
+
+- We can use the residual error (ε) to work out the position of the line.
+--
+
+- The residual error is the distance between the prediction and the data point.
+--
+
+- We squared it (or the sum would be zero) and minimise the 'sum of the squares'
+--
+
+```{r lm2, fig.retina=2, fig.align="center", fig.height=4, fig.width=5}
+
+a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5,
+                  arrow=arrow(length=unit(0.2,"cm")))
+```
+
+---
+
+## Regression models (3)
+
+- We created an `lm` object called `z`.  You can then use that object with other functions like `summary`, `predict`, `plot` etc.
+
+- Usually view model details with `summary`, but I'm using a function from `sjPlot`.
+```{r lm4}
+
+sjPlot::tab_model(z, show.df = TRUE, show.obs = TRUE)
+
+```
+--
+<br><br>
+- We can test fit using f-tests, prediction error or the R<sup>2</sup> .
+
+---
+
+## Regression diagnostics
+
+- We commonly check a few things about a regression model, often by plotting:
+```{r lmplot, fig.retina=2, fig.align="center", fig.height=5, fig.width=8, fig.keep = 'last'}
+par(mfrow=c(2,2))
+plot(z)
+```
+
+---
+class: center, middle
+
+# Exercise 9:  Correlation and Linear regression
+
+---
+
+## What about non-linear data?
+
+- Our data are not necessarily linear. Death is binary, LOS is a count etc.
+
+- We can extend linear models idea for this as a Generalized Linear Model (GLM)
+
+$$\large{g(\mu)= \alpha + \beta x}$$
+Where $\mu$ is the expectation of Y, and $g$ is the link function
+
+- The link function transforms the data before fitting a model
+
+- Can't use OLS for this, so we use 'maximum-likelihood'
+
+- Many of the methods for `lm` are common to `glm`, but we can't use R<sup>2</sup>
+
+- Other measures include AUC ('C-statistic'), and AIC or likelihood ratio tests.
+
+---
+
+## Generalized Linear Models
+
+- Use a `family` argument with `poisson` for counts or `binomial` for binary outcomes.
+- Plotting residuals is not straight forward, and less common with `glm`
+
+```{r glm1, collapse=TRUE}
+library(NHSRdatasets)
+data(LOS_model)
+glm_binomial <- glm(Death ~ Age + LOS, data=LOS_model, family="binomial")
+
+sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
+
+ModelMetrics::auc(glm_binomial)
+
+```
+
+---
+
+## Interactions
+
+- 'Interactions' are where predictor variables affect each other.
+--
+
+- HSMR has an interaction between co-morbidity and age. So co-morbidities have different effects related to age.
+--
+
+- Can add these with `*` or `:` (check help for which to use)
+--
+
+```{r glm2}
+glm_binomial2<- glm(Death ~ Age + LOS + Age*LOS, data=LOS_model, family="binomial")
+
+sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
+
+ModelMetrics::auc(glm_binomial2)
+
+```
+
+---
+
+# Interpretation
+
++ Our model coefficients in `lm` were straight-forward multipliers
++ `glm` is similar, but it is on the scale of the link-function.
+ + log scale for `poisson` models, or logit (log odds) scale for `binomial`
++ Common to transform output back to response scale
++ giving Incident Rate Ratios for `poisson`, or Odds Ratios for `binomial`
+
+```{r coeftransform, warning=FALSE, message=FALSE}
+cbind(Link=coef(glm_binomial2), Response=exp(coef(glm_binomial2)))
+
+```
+
+---
+
+## Prediction (1)
+
+- We can then use our model to predict our expected Y:
+- Need to decide what scale to predict on: `link` or `response`
+
+```{r glm3}
+library(dplyr)
+LOS_model$preds <- predict(glm_binomial2, type="response")
+
+top_n(LOS_model,5) %>% knitr::kable(format = "html")
+```
+
+---
+
+## Prediction (2)
+
+- Lets see the 10 cases with the highest predicted risk of death:
+
+```{r glm4}
+LOS_model %>% arrange(desc(preds)) %>% top_n(10) %>% knitr::kable(format = "html")
+
+```
+
+---
+class: middle
+
+# Exercise 2: Building a GLM
+
+---
+# Summary
+
+- Correlation shows the direction and strength of association
+- Regression allows us to quantify the relationships
+- We can use a single, or multiple, predictors 
+- Regression coefficents explain how much a change in $x$ affects $y$
+- R<sup>2</sup> is a common measure of in linear models, C-statistic/AUC/ROC in logistic moels
+- Prediction error is another useful metric
+- Generalized Linear Model (`glm`) allow linear models on a tranfomred scale, e.g. logositc regression for binary variables
+
+---
+class: middle
+
+# Exercise 3: Examining Frammingham data
+
+---
