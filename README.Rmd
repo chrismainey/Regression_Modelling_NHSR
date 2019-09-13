@@ -16,8 +16,8 @@ To download and reuse this material, please use these steps:
 1. Get familiar with how to use Git. Jenny Bryan's 'Happy Git with R' is a good place to start: https://happygitwithr.com/
 1. Register for a GitHub account.
 1. Clone this repository, using this link: https://github.com/nhs-r-community/Conference_Workshops_2019.git
-  1. You can do this with in terminal with the command: `git clone https://github.com/nhs-r-community/Conference_Workshops_2019.git`
-  1. By creating a New Project in RStudio, selection 'Version Control', add the link into the URL box.
+   - You can do this with in terminal with the command: `git clone https://github.com/nhs-r-community/Conference_Workshops_2019.git`
+   - By creating a New Project in RStudio, selection 'Version Control', add the link into the URL box.
   
 This will download all the session to you machine in an RStudio Project.
 
@@ -26,12 +26,12 @@ _Alternatively, you copy the code of the files you are interested in without hav
 
 ## For workshop leaders:
 
-Please submit your content to this repository using a pull request.  If you are not familliar with Git and GitHub, please contact the conference organisaing commitee for help, or follow these steps:
+Please submit your content to this repository using a pull request.  If you are not familliar with Git and GitHub, please contact the conference organising commitee for help, or follow these steps:
 
 1. Download Git for you system:  https://git-scm.com/downloads 
 1. Get familiar with how to use Git. Jenny Bryan's 'Happy Git with R' is a good place to start: https://happygitwithr.com/
 1. Register for a GitHub account.
-1. Go to the top of this page and click 'Fork'.  This creates your own copy of this repository.
+1. Go to the top of this page and click 'Fork'.  This creates your own copy of this repository. <img src='man/figures/fork.png' align="right" height="60" />
 1. 'Pull' it down to your machine.
 1. Create a folder with your workshop name and add material to it.
 1. 'Commit' your workshop material to the repository.
@@ -39,7 +39,8 @@ Please submit your content to this repository using a pull request.  If you are 
 1. Come back to this repository and create a 'pull' request (a request to merge the material in you 'fork' in).
 1. Follow the instructions and add a description of what you adding
 
-Please include:
+
+__Please include:__
 
 1. A folder with the name of your session
 1. A README.md file in you folder, this will create the landing page, like the one you are reading now.
@@ -49,7 +50,7 @@ We may rearrange your repository files or folders for consistency across worksho
 
 <br>
 
-Please note that the 'Conference_Workshops_2019' project is released with a
+__Please note that the 'Conference_Workshops_2019' project is released with a
 [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
-By contributing to this project, you agree to abide by its terms.
+By contributing to this project, you agree to abide by its terms.__
 
