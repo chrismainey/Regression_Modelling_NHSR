@@ -2,7 +2,7 @@
 # NHS-R Community Conference Workshops 2019 <a href='https://nhsrcommunity.com/'><img src='man/figures/logo.png' align="right" height="80" /></a>
 
 This repository holds the content for the workshop session for the NHS-R
-Community conference, 4th & 5th Novemebr 2019.
+Community conference, 4th & 5th November 2019.
 
 <br>
 
@@ -29,8 +29,8 @@ without having to use Git.*
 ## For workshop leaders:
 
 Please submit your content to this repository using a pull request. If
-you are not familliar with Git and GitHub, please contact the conference
-organising commitee for help, or follow these steps:
+you are not familiar with Git and GitHub, please contact the conference
+organising committee for help, or follow these steps:
 
 1.  Download Git for you system: <https://git-scm.com/downloads>
 2.  Get familiar with how to use Git. Jenny Bryan’s ‘Happy Git with R’
