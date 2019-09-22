@@ -48,7 +48,7 @@ NHS Foundation Trust&lt;/b&gt;&lt;/p&gt;
  - Assessing model fit
 - Multiple Regression
 - Prediction
-- Generalized Linear Models using `glm`)
+- Generalized Linear Models using `glm`
  - Logistic Regression
  
 --
@@ -60,12 +60,29 @@ ___Mixture of theory, examples and practical exercises___
 
 # Relationships between variables
 
-Correlation and regression are method of assessing relationships:
-+
-+ We are often concern about how variables relate to each other
-+ Sometimes the effects of other variables interact/mask this ("confounding")
-- Correlation examines the relationship
-- Regression estimates how one variable, `\(x\)` (or more), predicts another, `\(y\)` .
+If two variables are related, we use the described them are 'correlated'.
+
+--
+
+Often interested in strength of association
+
+--
+
+&lt;br&gt;&lt;br&gt;
+Two techniques commonly used to investigate:
+
+--
+
++ ___'Correlation'___ show strength of association
+
+--
+
++ ___'Regression'___ estimates how one variable, `\(x\)` (or more than one), predicts another, `\(y\)` .
+
+--
+
+&lt;br&gt;&lt;br&gt;
+Sometimes the effects of other variables interact/mask this ("confounding")
 
 ---
 
@@ -138,15 +155,15 @@ cor.test(x,y)
 ```
 
 + `cor.test` is a correlation and a t-test.
-+ different types of correlation coefficient, default is 'Pearson'
++ Different types of correlation coefficient, default is 'Pearson'
 + Doesn't work for different distributions, data types or more variables
 
 ---
 
 ## Regression models (1)
 
-Regression is a more advance technique that gives us more options than correlation.
-A linear regression is built with `lm`:
+Regression gives us more options than correlation:
+
 
 ```r
 z &lt;- lm(y~x)
@@ -158,25 +175,24 @@ a
 &lt;img src="Regression_modelling_files/figure-html/lm3-1.png" width="360" style="display: block; margin: auto;" /&gt;
 
 
-`$$\large{y= \alpha + \beta x + \epsilon}$$`
+`$$y= \alpha + \beta x + \epsilon$$`
 
 ---
 
 ### Ordinary Least Squares 'OLS'
 
-- We can use the residual error (ε) to work out the position of the line.
+- Uses the residual error (ε) to work out the position of the line.
 --
 
-- The residual error is the distance between the prediction and the data point.
+- 'The 'Residual' is the distance between the prediction and the data point.
 --
 
-- We squared it (or the sum would be zero) and minimise the 'sum of the squares'
+- Squared it (or sum would be zero) and minimise 'sum of the squares'
 --
 
 
 ```r
-a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5,
-                  arrow=arrow(length=unit(0.2,"cm")))
+a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5, arrow=arrow(length=unit(0.2,"cm")))
 ```
 
 &lt;img src="Regression_modelling_files/figure-html/lm2-1.png" width="360" style="display: block; margin: auto;" /&gt;
@@ -637,14 +653,6 @@ class: middle
 # Exercise 2: Building a GLM
 
 ---
-class: middle
-
-# Exercise 3: Examining Frammingham data
-
-
-
----
-
 # Summary
 
 - Correlation shows the direction and strength of association
@@ -654,6 +662,13 @@ class: middle
 - R&lt;sup&gt;2&lt;/sup&gt; is a common measure of in linear models, C-statistic/AUC/ROC in logistic moels
 - Prediction error is another useful metric
 - Generalized Linear Model (`glm`) allow linear models on a tranfomred scale, e.g. logositc regression for binary variables
+
+---
+class: middle
+
+# Exercise 3: Examining Frammingham data
+
+---
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
@@ -700,7 +715,24 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 (function() {

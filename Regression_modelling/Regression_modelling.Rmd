@@ -52,7 +52,7 @@ NHS Foundation Trust</b></p>
  - Assessing model fit
 - Multiple Regression
 - Prediction
-- Generalized Linear Models using `glm`)
+- Generalized Linear Models using `glm`
  - Logistic Regression
  
 --
@@ -64,12 +64,29 @@ ___Mixture of theory, examples and practical exercises___
 
 # Relationships between variables
 
-Correlation and regression are method of assessing relationships:
-+
-+ We are often concern about how variables relate to each other
-+ Sometimes the effects of other variables interact/mask this ("confounding")
-- Correlation examines the relationship
-- Regression estimates how one variable, $x$ (or more), predicts another, $y$ .
+If two variables are related, we use the described them are 'correlated'.
+
+--
+
+Often interested in strength of association
+
+--
+
+<br><br>
+Two techniques commonly used to investigate:
+
+--
+
++ ___'Correlation'___ show strength of association
+
+--
+
++ ___'Regression'___ estimates how one variable, $x$ (or more than one), predicts another, $y$ .
+
+--
+
+<br><br>
+Sometimes the effects of other variables interact/mask this ("confounding")
 
 ---
 
@@ -126,15 +143,15 @@ cor.test(x,y)
 ```
 
 + `cor.test` is a correlation and a t-test.
-+ different types of correlation coefficient, default is 'Pearson'
++ Different types of correlation coefficient, default is 'Pearson'
 + Doesn't work for different distributions, data types or more variables
 
 ---
 
 ## Regression models (1)
 
-Regression is a more advance technique that gives us more options than correlation.
-A linear regression is built with `lm`:
+Regression gives us more options than correlation:
+
 ```{r lm3, fig.retina=2, fig.align="center", fig.height=4, fig.width=5}
 z <- lm(y~x)
 
@@ -143,25 +160,23 @@ a
 ```
 
 
-$$\large{y= \alpha + \beta x + \epsilon}$$
+$$y= \alpha + \beta x + \epsilon$$
 
 ---
 
 ### Ordinary Least Squares 'OLS'
 
-- We can use the residual error (ε) to work out the position of the line.
+- Uses the residual error (ε) to work out the position of the line.
 --
 
-- The residual error is the distance between the prediction and the data point.
+- 'The 'Residual' is the distance between the prediction and the data point.
 --
 
-- We squared it (or the sum would be zero) and minimise the 'sum of the squares'
+- Squared it (or sum would be zero) and minimise 'sum of the squares'
 --
 
 ```{r lm2, fig.retina=2, fig.align="center", fig.height=4, fig.width=5}
-
-a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5,
-                  arrow=arrow(length=unit(0.2,"cm")))
+a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5, arrow=arrow(length=unit(0.2,"cm")))
 ```
 
 ---
