@@ -2,8 +2,8 @@
 
 ### Examining Framingham data
 
-#The Framingham Heart disease study is a long-standing cohort study that is responsible for 
-#much of what we know about heart dieases and associated conditions.  For more info, see:
+# The Framingham Heart disease study is a long-standing cohort study that is responsible for 
+# much of what we know about heart disease and associated conditions.  For more info, see:
 #https://en.wikipedia.org/wiki/Framingham_Heart_Study
 
 # We are going to use regression to investigate some of it. So first, load it:
@@ -32,67 +32,56 @@ framingham <- read.csv("./data/framingham.csv")
 
 ####### Part 1: Linear regression with single predictor  ##########
 
-# With the Framingham data, we will examine the relationship between systolic blood pressure and BMI.
-
-# Lets view the data to see what we are working with.
+# With the Framingham data, we will examine the relationship between systolic blood 
+# pressure and BMI. Lets view the data to see what we are working with.
 
 summary(framingham)
 
 View(framingham)
 
 
-# A good first step is to visualise the distribution of the outcome (sysBP), and the possible relationship
-# with predictors.
-
-library(ggplot2)
-ggplot(framingham, aes(x=sysBP))+
-  geom_histogram(fill="green3", col=1, alpha=0.5)+
-  labs(title="Distribution of Systolic Blood Pressure", subtitle="Frammingham study data")+
-  theme(plot.subtitle = element_text(face="italic"))
-
-
-# Is blood pressure relate to BMI?
-# Visualise it as a scatter plot:
-
-ggplot(framingham, aes(x=sysBP, y=BMI))+
-  geom_point()+
-  geom_smooth(method="lm", col="red")+
-  labs(title="Systolic Blood Pressure vs. BMI", subtitle="Frammingham study data")+
-  theme(plot.subtitle = element_text(face="italic"))
+# A good first step is to visualise the distribution of the outcome (sysBP), and the 
+# possible relationship with predictors.
 
 
 
-# Lets build a regression model. sysBP is our outcome, and BMI our predictor.
-
-lm1 <- lm(sysBP ~ BMI, data = framingham)
-
-summary(lm1)
 
 
-## Can you interpret the output?  WHere are the coefficients, standard errors and p-values?
-# For each increase of one in BMI, Systolic blood pressure increases by 1.76 on average, 
-# starting from 86.93 
 
-## Is BMI 'signficant'?  
-# Yes, p-value is very low ( < 0.05 for common 95% criterion)
+## Is blood pressure relate to BMI?
+## Visualise it as a scatter plot:
+
+
+
+
+
+
+## Now we can build a regression model. sysBP is our outcome, and BMI our predictor.
+
+
+
+
+## Can you interpret the output?  Where are the coefficients, standard errors and p-values?
+
+
+
+## Is BMI 'significant'?  
+
 
 
 ##  How much variation in sysBP does BMI explain?
-# 10.7%
+
 
 
 
 
 # What happens if we mean-centre and standardised BMI in the regression (using `scale`)
 
-lm2 <- lm(sysBP ~ scale(BMI), data = framingham)
 
-summary(lm2)
+
 
 #  How do we interpret this?
 
-# The average systolic blood pressure is 132.34, and an increase of 
-# one standard deviation increases this by 7.18.
 
 
 
@@ -103,39 +92,26 @@ summary(lm2)
 # Lets consider some more variables: currentSmoker, age, education
 
 # BMI + currentSmoker
-lm3 <- lm(sysBP ~ BMI + currentSmoker, data = framingham)
 
-summary(lm3)
+
 
 # BMI + age
-lm4 <- lm(sysBP ~ BMI + age, data = framingham)
 
-summary(lm4)
+
 
 # BMI + age + current smoker
 
-lm5 <- lm(sysBP ~ BMI + currentSmoker + age, data = framingham)
 
-summary(lm5)
 
 
 ## How would you interpret these results?
-# Add was a strong predictor.  Smoking appear signficant, but when age was added, it was not.
-# This suggests that smoking status may be correlated with with, and acted as somthing of a proxy.
-# Removing smoking status improves the model as there is one less 'degree of freedom' used on 
-# a non-predictive variable.
 
 
 # How would you add education into this model and why?
 
-# BMI + age
-lm6 <- lm(sysBP ~ BMI + age + factor(education), data = framingham)
+# BMI + age + education
 
-summary(lm6)
 
-## How do you intepret education's coefficients?
-#  1 is our references (0), and each level is difference from 1
-# Patients who have had vocations or college education showed lower blood pressure than those who
-# had some high school education, and high school / GDE showed higher blood pressure than those
-# who attended some high school.
+## How do you interpret education's coefficients?
+
 

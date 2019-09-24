@@ -296,6 +296,27 @@ lm(y ~ x1 + x2 + x3 + xn)
 ```
 
 ---
+
+## Categorical variables
+
+How do we enter categorical variables into a model?
+
++ Models won't understand text
++ If we provide a numeric category, it will see it as numeric
+--
+
++ `R` has a built in data type: `factors`
+
+`Factors` are 'dummy coded:' _pivotted to binary columns_
+--
+
++ If we have a categories: "A", "B" & "C", we get:
+```{r dummy, echo}
+a<- data.frame(Category = factor(c("A", "B", "C", "C", "A", "B")))
+model.matrix(~., a)
+```
+
+---
 class: middle
 
 ## Exercise 2:  Linear regression with multiple predictors
@@ -424,5 +445,5 @@ class: middle
 ---
 class: middle
 
-# Exercise 5: Predicting 10-year CHD in Frammingham data
+# Exercise 5: Predicting 10-year CHD in Framingham data
 

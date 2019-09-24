@@ -30,14 +30,5 @@ framingham <- read.csv("./data/framingham.csv")
 # Try and build the best regression model you can:
 
 
-CHDrisk <- glm(TenYearCHD ~  factor(male) + factor(currentSmoker)+ age  +
-               glucose + sysBP + factor(diabetes) + factor(prevalentStroke) +
-               factor(prevalentHyp) + totChol, 
-               data = framingham, family = "binomial")
-
-
-
-ModelMetrics::auc(CHDrisk)
-summary(CHDrisk)
 
 

@@ -1,5 +1,4 @@
-### Exercise 3 ###
-# Building a Generalized Linear Model (GLM)
+##### Exercise 3:  Building a Generalized Linear Model (GLM) ######
 
 
 ## Here we will build a GLM to predict death using the LOS_models dataset from the NHSRdatasets package.
@@ -7,36 +6,35 @@
 #Load package, install if you don't have it.
 #install.packages("COUNT")
 library(NHSRdatasets)
-data(LOS_model)
+
 
 #load the dataset 'medpar' using the 'data' function
-
 data(LOS_model)
 
 # Inspect the data. You can use View, summary or other functions.
-# Descriptions of the fields are available in the help file: ?medpar
+# Descriptions of the fields are available in the help file: ?LOS_model
 View(LOS_model)
 summary(LOS_model)
 
 
 
-# Now lets build a glm to predict Death. Add Age to your model.
-# What other argument does glm take, compared to lm?
+## Now lets build a glm to predict Death. Add Age to your model.
+## What other argument does glm take, compared to lm?
 
 glm1<- glm(Death ~ Age, data=LOS_model, family="binomial")
 
-# Lets look at the model summary
+## Lets look at the model summary
 summary(glm1)
 
 
-# Is age signficant?  How would we intepret it?
+## Is age signficant?  How would we intepret it?
 
 # Yes, age is signficant. Hard to interpret on the log scale.
-# Log-odds of death increases by 0.02 for every increase in one of age.
+# Log-odds of death increases by 0.02 for every increase in one of age, from baseline log-odds 
+# of -2.18
 
-# Try this model as a scaled model.
 
-
+## Try this model as a scaled model.
 
 glm2<- glm(Death ~ scale(Age), data=LOS_model, family="binomial")
 
@@ -44,9 +42,9 @@ glm2<- glm(Death ~ scale(Age), data=LOS_model, family="binomial")
 summary(glm2)
 
 ## Can you interpret scale now?
-
-# The average log-odds of death is -1.57, incresing by 0.33 for each standard deviation 
+# The average log-odds of death is -1.57, increasing by 0.33 for each standard deviation 
 # increase in age
+
 
 # Let make them more interpretable by transforming them back to odd.
 # To do this, we can exponetiate the coefficients
@@ -54,7 +52,8 @@ summary(glm2)
 exp(coef(glm1))
 exp(coef(glm2))
 
-# Interpret now:
+# Interpretation:
+# Intercept has less meaning, but the odds of death multiplied by 1.012 for each increase of 1 in age.
 
 
 
@@ -90,8 +89,8 @@ lrtest(glm1, glm3)
 
 
 ## Are these results what you expect?  Why?
-# not really.  LOS is strong predictor, but it suggests age is not.  Surely older people have greater
-# chance of dying?  Maybe they are linked, i.e. LOS is more or less predictive for older patietns than
+# Not really.  LOS is strong predictor, but it suggests age is not.  Surely older people have greater
+# chance of dying?  Maybe they are linked, i.e. LOS is more or less predictive for older patients than
 # it is for younger ones... interaction term!
 
 glm4 <- glm(Death ~ Age * LOS, data = LOS_model, family="binomial")
@@ -99,7 +98,7 @@ glm4 <- glm(Death ~ Age * LOS, data = LOS_model, family="binomial")
 summary(glm4)
 
 ## Is this different?  
-# Yes! This model suggest they are all signficant, with the combinatino of LOS and age (when increasing)
+# Yes! This model suggests they are all signficant, with the combination of LOS and age (when increasing)
 # showing a negative coefficient.  i.e. both age and LOS important, but it is not as strong as a 
 # sum of both
 
@@ -113,16 +112,16 @@ ModelMetrics::auc(glm4)
 
 ################ Exercise 4: Prediction ######################
 
-# Let's use our models to predict.  We can predict back onto the same data, or new data, using the
-# `newdata` argument.  We will fit back to our data today, so we do not strictly need to specify it, 
-# but if we do, it will hadle missing data better.
+## Let's use our models to predict.  We can predict back onto the same data, or new data, using the
+## `newdata` argument.  We will fit back to our data today, so we do not strictly need to specify it, 
+## but if we do, it will handle missing data better.
 
-# First for our lm, we'll add it back into the data.frame, as a column called 'preds' :
+## First for our lm, we'll add it back into the frammingham data.frame, as a column called 'preds' :
 
 framingham$preds <- predict(lm6, newdata=framingham)
 
 
-# We cam compare them to the original data.  Lets do this in a plot:
+# We can compare them to the original data.  Lets do this in a plot:
 library(ggplot2)
 ggplot(framingham, aes(y=sysBP, x=preds))+
   geom_point()+
@@ -132,24 +131,24 @@ ggplot(framingham, aes(y=sysBP, x=preds))+
 
 
 
-# Now let try the same thing for our logistic model. This is different because of the link function.
-# We need to specify which scale to predict on:
+## Now let try the same thing for our logistic model. This is different because of the link function.
+## We need to specify which scale to predict on:
 
 LOS_model$preds <- predict(glm4, newdata=LOS_model, type="response")
 
 
-# When visualising it, what happens if we build a scatter plot?
+## When visualising it, what happens if we build a scatter plot?
 ggplot(LOS_model, aes(y=Death, x=preds))+
   geom_point()+
   geom_smooth(col="red")+
   labs(title="Deaths vs. Probability of death", subtitle="LOS_model")+
   theme(plot.subtitle = element_text(face="italic"))
 
-# Death can only be 0 or 1, so we get two bands on y axis.  This plot isn't very meaningful.
+## Death can only be 0 or 1, so we get two bands on y axis.  This plot isn't very meaningful.
 
 
 ## How else could we visualise it?
-# Need to reflect 'Death' in groups: box plot, violin, plot, overlayed histograms or denisties etc.
+## Need to reflect 'Death' in groups: box plot, violin, plot, overlayed histograms or denisties etc.
 
 # Boxplot
 ggplot(LOS_model, aes(x=factor(Death), group=Death, y=preds))+
@@ -168,7 +167,6 @@ ggplot(LOS_model, aes(x=factor(Death), group=Death, y=preds))+
 # Histogram
 ggplot(LOS_model, aes(x=preds, fill=factor(Death), col=factor(Death), group=factor(Death)))+
   geom_histogram(alpha=0.5, col=1, position="identity", bins=30)+
-  geom_hline(aes(yintercept=median(preds)))+
   scale_fill_discrete(name="Died")+
   scale_x_continuous("Probaility of Death")+
   labs(title="Probability of death", subtitle="LOS_model data")+
@@ -183,6 +181,7 @@ ggplot(LOS_model, aes(x=preds, fill=factor(Death), col=factor(Death), group=fact
   theme(plot.subtitle = element_text(face="italic"))
 
 
-# What do your plot(s) suggest?  The highest probabilities oare in the 'died' group.
+## What do your plot(s) suggest?  
+# The highest probabilities are in the 'died' group.
 # There are fewer patients with low probabilities in the died group. The median value looks
 # Median probability is higher in Died group.
