@@ -14,6 +14,9 @@ class: center
 
 
 
+
+
+
 &lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
 
 ## Regression Modelling in `R`
@@ -130,28 +133,20 @@ Lets check the correlation in our generated data:
 
 ```r
 cor(x, y)
-```
+#&gt; [1] 0.8650106
 
-```
-## [1] 0.8650106
-```
-
-```r
 cor.test(x,y)
-```
-
-```
-## 
-## 	Pearson's product-moment correlation
-## 
-## data:  x and y
-## t = 11.944, df = 48, p-value = 5.53e-16
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  0.7727115 0.9214882
-## sample estimates:
-##       cor 
-## 0.8650106
+#&gt; 
+#&gt; 	Pearson's product-moment correlation
+#&gt; 
+#&gt; data:  x and y
+#&gt; t = 11.944, df = 48, p-value = 5.53e-16
+#&gt; alternative hypothesis: true correlation is not equal to 0
+#&gt; 95 percent confidence interval:
+#&gt;  0.7727115 0.9214882
+#&gt; sample estimates:
+#&gt;       cor 
+#&gt; 0.8650106
 ```
 
 + `cor.test` is a correlation and a t-test.
@@ -160,7 +155,7 @@ cor.test(x,y)
 
 ---
 
-## Regression models (1)
+### Regression models (1)
 
 Regression gives us more options than correlation:
 
@@ -168,11 +163,10 @@ Regression gives us more options than correlation:
 ```r
 z &lt;- lm(y~x)
 
-a&lt;- a + geom_smooth(method="lm", col="red", linetype=2)
-a
+print(a&lt;- a + geom_smooth(method="lm", col="red", linetype=2))
 ```
 
-&lt;img src="Regression_modelling_files/figure-html/lm3-1.png" width="360" style="display: block; margin: auto;" /&gt;
+&lt;img src="Regression_modelling_files/figure-html/lm3-1.png" width="432" style="display: block; margin: auto;" /&gt;
 
 
 `$$y= \alpha + \beta x + \epsilon$$`
@@ -181,13 +175,13 @@ a
 
 ### Ordinary Least Squares 'OLS'
 
-- Uses the residual error (ε) to work out the position of the line.
++ Uses the residual error (ε) to work out the position of the line.
 --
 
-- 'The 'Residual' is the distance between the prediction and the data point.
++ 'Residual'; distance between prediction and data point.
 --
 
-- Squared it (or sum would be zero) and minimise 'sum of the squares'
++ Sum would be zero, square and minimise 'sum of the squares'
 --
 
 
@@ -195,15 +189,44 @@ a
 a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5, arrow=arrow(length=unit(0.2,"cm")))
 ```
 
-&lt;img src="Regression_modelling_files/figure-html/lm2-1.png" width="360" style="display: block; margin: auto;" /&gt;
+&lt;img src="Regression_modelling_files/figure-html/lm2-1.png" width="432" style="display: block; margin: auto;" /&gt;
 
 ---
 
 ## Regression models (3)
 
-- We created an `lm` object called `z`.  You can then use that object with other functions like `summary`, `predict`, `plot` etc.
++ We created an `lm` object called `z`.  You can then use that object with other functions like `summary`, `predict`, `plot` etc.
 
-- Usually view model details with `summary`, but I'm using a function from `sjPlot`.
+
+
+```r
+summary(z)
+#&gt; 
+#&gt; Call:
+#&gt; lm(formula = y ~ x)
+#&gt; 
+#&gt; Residuals:
+#&gt;     Min      1Q  Median      3Q     Max 
+#&gt; -4.9575 -2.2614  0.4444  2.4475  4.1663 
+#&gt; 
+#&gt; Coefficients:
+#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    
+#&gt; (Intercept)   5.4776     1.1386   4.811 1.53e-05 ***
+#&gt; x             1.2507     0.1047  11.944 5.53e-16 ***
+#&gt; ---
+#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#&gt; 
+#&gt; Residual standard error: 2.77 on 48 degrees of freedom
+#&gt; Multiple R-squared:  0.7482,	Adjusted R-squared:  0.743 
+#&gt; F-statistic: 142.7 on 1 and 48 DF,  p-value: 5.53e-16
+```
+
+
+---
+
+## Regression models (4)
+
++ Usually view model details with `summary`, but I'm using a function from `sjPlot` here.
 
 ```r
 sjPlot::tab_model(z, show.df = TRUE, show.obs = TRUE)
@@ -243,14 +266,15 @@ sjPlot::tab_model(z, show.df = TRUE, show.obs = TRUE)
 
 &lt;/table&gt;
 --
-&lt;br&gt;&lt;br&gt;
-- We can test fit using f-tests, prediction error or the R&lt;sup&gt;2&lt;/sup&gt; .
+
+&lt;br&gt;
++ We can test fit using f-tests, prediction error or the R&lt;sup&gt;2&lt;/sup&gt; .
 
 ---
 
-## Regression diagnostics
+## Regression diagnostics (5)
 
-- We commonly check a few things about a regression model, often by plotting:
+- A common check is to plot residuals:
 
 ```r
 par(mfrow=c(2,2))
@@ -259,10 +283,11 @@ plot(z)
 
 &lt;img src="Regression_modelling_files/figure-html/lmplot-1.png" width="576" style="display: block; margin: auto;" /&gt;
 
+
 ---
 class: center, middle
 
-# Exercise 9:  Correlation and Linear regression
+# Exercise 1:  Correlation and Linear regression
 
 ---
 
@@ -342,7 +367,7 @@ sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE,
 ```r
 
 ModelMetrics::auc(glm_binomial)
-## [1] 0.6594225
+#&gt; [1] 0.6594225
 ```
 
 ---
@@ -413,11 +438,9 @@ sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE
 &lt;/table&gt;
 
 ```r
-ModelMetrics::auc(glm_binomial2)
-```
 
-```
-## [1] 0.7068597
+ModelMetrics::auc(glm_binomial2)
+#&gt; [1] 0.7068597
 ```
 
 ---
@@ -433,14 +456,11 @@ ModelMetrics::auc(glm_binomial2)
 
 ```r
 cbind(Link=coef(glm_binomial2), Response=exp(coef(glm_binomial2)))
-```
-
-```
-##                     Link   Response
-## (Intercept) -4.516296024 0.01092943
-## Age          0.042618955 1.04354018
-## LOS          0.544861715 1.72436991
-## Age:LOS     -0.006988267 0.99303609
+#&gt;                     Link   Response
+#&gt; (Intercept) -4.516296024 0.01092943
+#&gt; Age          0.042618955 1.04354018
+#&gt; LOS          0.544861715 1.72436991
+#&gt; Age:LOS     -0.006988267 0.99303609
 ```
 
 ---
@@ -453,33 +473,18 @@ cbind(Link=coef(glm_binomial2), Response=exp(coef(glm_binomial2)))
 
 ```r
 library(dplyr)
-```
-
-```
-## 
-## Attaching package: 'dplyr'
-```
-
-```
-## The following objects are masked from 'package:stats':
-## 
-##     filter, lag
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
-```
-
-```r
+#&gt; 
+#&gt; Attaching package: 'dplyr'
+#&gt; The following objects are masked from 'package:stats':
+#&gt; 
+#&gt;     filter, lag
+#&gt; The following objects are masked from 'package:base':
+#&gt; 
+#&gt;     intersect, setdiff, setequal, union
 LOS_model$preds &lt;- predict(glm_binomial2, type="response")
 
 top_n(LOS_model,5) %&gt;% knitr::kable(format = "html")
-```
-
-```
-## Selecting by preds
+#&gt; Selecting by preds
 ```
 
 &lt;table&gt;
@@ -546,10 +551,7 @@ top_n(LOS_model,5) %&gt;% knitr::kable(format = "html")
 
 ```r
 LOS_model %&gt;% arrange(desc(preds)) %&gt;% top_n(10) %&gt;% knitr::kable(format = "html")
-```
-
-```
-## Selecting by preds
+#&gt; Selecting by preds
 ```
 
 &lt;table&gt;

@@ -17,6 +17,15 @@ output:
 class: center
 
 
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+  comment = "#>",
+  collapse = TRUE,
+  fig.align = "center"
+)
+```
+
+
 
 <br><br><br><br>
 
@@ -100,7 +109,7 @@ library(ggplot2)
 ```
 
 ## Example:
-```{r lm1, fig.retina= 2, fig.align="center", fig.height=5, fig.width=6}
+```{r lm1, fig.retina= 2, fig.align="center", fig.height=4.6, fig.width=6}
 x <- rnorm(50, 10, 4)
 y <- runif(50, min = 0.5, 10) + (1.25*x)
 
@@ -148,15 +157,14 @@ cor.test(x,y)
 
 ---
 
-## Regression models (1)
+### Regression models (1)
 
 Regression gives us more options than correlation:
 
-```{r lm3, fig.retina=2, fig.align="center", fig.height=4, fig.width=5}
+```{r lm3, fig.retina=2, fig.align="center", fig.height=4.8, fig.width=6}
 z <- lm(y~x)
 
-a<- a + geom_smooth(method="lm", col="red", linetype=2)
-a
+print(a<- a + geom_smooth(method="lm", col="red", linetype=2))
 ```
 
 
@@ -166,16 +174,16 @@ $$y= \alpha + \beta x + \epsilon$$
 
 ### Ordinary Least Squares 'OLS'
 
-- Uses the residual error (ε) to work out the position of the line.
++ Uses the residual error (ε) to work out the position of the line.
 --
 
-- 'The 'Residual' is the distance between the prediction and the data point.
++ 'Residual'; distance between prediction and data point.
 --
 
-- Squared it (or sum would be zero) and minimise 'sum of the squares'
++ Sum would be zero, square and minimise 'sum of the squares'
 --
 
-```{r lm2, fig.retina=2, fig.align="center", fig.height=4, fig.width=5}
+```{r lm2, fig.retina=2, fig.align="center", fig.height=5, fig.width=6}
 a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5, arrow=arrow(length=unit(0.2,"cm")))
 ```
 
@@ -183,32 +191,44 @@ a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5, arrow=arrow(length=unit(0.
 
 ## Regression models (3)
 
-- We created an `lm` object called `z`.  You can then use that object with other functions like `summary`, `predict`, `plot` etc.
++ We created an `lm` object called `z`.  You can then use that object with other functions like `summary`, `predict`, `plot` etc.
 
-- Usually view model details with `summary`, but I'm using a function from `sjPlot`.
+
+```{r sum_reg}
+summary(z)
+```
+
+
+---
+
+## Regression models (4)
+
++ Usually view model details with `summary`, but I'm using a function from `sjPlot` here.
 ```{r lm4}
-
 sjPlot::tab_model(z, show.df = TRUE, show.obs = TRUE)
 
 ```
 --
-<br><br>
-- We can test fit using f-tests, prediction error or the R<sup>2</sup> .
+
+<br>
++ We can test fit using f-tests, prediction error or the R<sup>2</sup> .
++ R<sup>2</sup> is the proportion of variation in $y$, explained by $x$.
 
 ---
 
-## Regression diagnostics
+## Regression diagnostics (5)
 
-- We commonly check a few things about a regression model, often by plotting:
-```{r lmplot, fig.retina=2, fig.align="center", fig.height=5, fig.width=8, fig.keep = 'last'}
+- A common check is to plot residuals:
+```{r lmplot, fig.retina=2, fig.align="center", fig.height=5.5, fig.width=8, fig.keep = 'last'}
 par(mfrow=c(2,2))
 plot(z)
 ```
 
+
 ---
 class: center, middle
 
-# Exercise 9:  Correlation and Linear regression
+# Exercise 1:  Correlation and Linear regression
 
 ---
 
