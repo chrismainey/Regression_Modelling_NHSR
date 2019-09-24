@@ -253,7 +253,7 @@ A common addition is to mean-centre and scale our variables:
 <br><br>
 This converts our interpretation, so:
 + The intercept becomes the average $y$ value
-+ $\beta$ becomse the change in $y$ for each standard deviation increase in $x$ 
++ $\beta$ becomes the change in $y$ for each standard deviation increase in $x$ 
 
 
 ---
@@ -261,11 +261,12 @@ This converts our interpretation, so:
 ## Regression diagnostics (5)
 
 - A common check is to plot residuals:
-```{r rplotsetup, echo=FALSE}
-par(mfrow=c(2,2))
+```{r rplotsetup, eval=FALSE}
+plot(z)
 ```
 
-```{r lmplot, fig.retina=2, fig.align="center", fig.height=5.5, fig.width=8, fig.keep = 'last'}
+```{r lmplot, echo=FALSE, fig.retina=2, fig.align="center", fig.height=5.5, fig.width=8, fig.keep = 'last'}
+par(mfrow=c(2,2))
 plot(z)
 ```
 
@@ -273,13 +274,13 @@ plot(z)
 ---
 class: center, middle
 
-## Exercise 1:  Linear regression with single predictor
+## Exercise 1:  Linear regression with a single predictor
 
 ---
 
 # More than one predictor?
 
-Our plots in earlier slide make sense in 2 dimensions, but regression is not limited by this.
+Our plots in earlier slides make sense in 2 dimensions, but regression is not limited to this.
 
 --
 
@@ -295,7 +296,7 @@ lm(y ~ x1 + x2 + x3 + xn)
 ```
 
 ---
-class: center, middle
+class: middle
 
 ## Exercise 2:  Linear regression with multiple predictors
 
@@ -350,9 +351,6 @@ ModelMetrics::auc(glm_binomial)
 - 'Interactions' are where predictor variables affect each other.
 --
 
-- HSMR has an interaction between co-morbidity and age. So co-morbidities have different effects related to age.
---
-
 - Can add these with `*` or `:` (check help for which to use)
 --
 
@@ -360,9 +358,7 @@ ModelMetrics::auc(glm_binomial)
 glm_binomial2 <- glm(died ~ factor(age80) * los + factor(type), data=medpar, family="binomial")
 
 sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
-
 ModelMetrics::auc(glm_binomial2)
-
 ```
 
 ---
@@ -380,7 +376,7 @@ cbind(Link=coef(glm_binomial2), Response=exp(coef(glm_binomial2)))
 ```
 
 ---
-class: middle, center
+class: middle
 
 # Exercise 3: Generalized Linear Model (GLM)
 
@@ -388,7 +384,7 @@ class: middle, center
 
 ## Prediction (1)
 
-- We can then use our model to predict our expected Y:
+- We can then use our model to predict our expected $Y$:
 - Need to decide what scale to predict on: `link` or `response`
 
 ```{r glm3, warning=FALSE, message=FALSE}
@@ -406,13 +402,12 @@ top_n(medpar,5) %>% knitr::kable(format = "html")
 
 ```{r glm4}
 medpar %>% arrange(desc(preds)) %>% top_n(10) %>% knitr::kable(format = "html")
-
 ```
 
 ---
 class: middle
 
-# Exercise 2: Building a GLM
+# Exercise 4: Predicting from models
 
 ---
 # Summary
@@ -420,13 +415,14 @@ class: middle
 - Correlation shows the direction and strength of association
 - Regression allows us to quantify the relationships
 - We can use a single, or multiple, predictors 
-- Regression coefficents explain how much a change in $x$ affects $y$
-- R<sup>2</sup> is a common measure of in linear models, C-statistic/AUC/ROC in logistic moels
-- Prediction error is another useful metric
-- Generalized Linear Model (`glm`) allow linear models on a tranfomred scale, e.g. logositc regression for binary variables
+- Regression coefficients explain how much a change in $x$ affects $y$
+- R<sup>2</sup> is a common measure of in linear models, C-statistic/AUC/ROC in logistic models
+- Generalized Linear Model (`glm`) allow linear models on a transformed scale, e.g. logistic regression for binary variables
+- Interactions terms allow us to examine confounded predictors
+- We can predict from our model objects, but must remember the link-function scale in `glm`
 
 ---
 class: middle
 
-# Exercise 5: Predicting 10-yeard CHD in Frammingham data
+# Exercise 5: Predicting 10-year CHD in Frammingham data
 

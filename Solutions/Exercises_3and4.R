@@ -123,7 +123,7 @@ framingham$preds <- predict(lm6, newdata=framingham)
 
 
 # We cam compare them to the original data.  Lets do this in a plot:
-
+library(ggplot2)
 ggplot(framingham, aes(y=sysBP, x=preds))+
   geom_point()+
   geom_smooth(col="red")+
