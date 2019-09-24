@@ -4,7 +4,7 @@ author: "Chris Mainey chris.mainey@uhb.nhs.uk"
 date: "2019/09/02 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
-    chakra: libs/remark-latest.min.js
+    chakra: "libs/remark-latest.min.js"
     css: "libs/HED.css"
     lib_dir: libs
     seal: false
@@ -73,24 +73,25 @@ ___Mixture of theory, examples and practical exercises___
 
 # Relationships between variables
 
-If two variables are related, we use the described them are 'correlated'.
+If two variables are related, we usually describe them as 'correlated'.
 
 --
 
+<br>
 Often interested in strength of association
 
 --
 
 <br><br>
-Two techniques commonly used to investigate:
+Two analysis techniques commonly used to investigate:
 
 --
 
-+ ___'Correlation'___ show strength of association
++ ___Correlation:___ shows direction, and strength of association
 
 --
 
-+ ___'Regression'___ estimates how one variable, $x$ (or more than one), predicts another, $y$ .
++ ___Regression:___ estimates how one variable, $x$ (or more than one), predicts another, $y$ .
 
 --
 
@@ -122,21 +123,21 @@ a
 
 # Correlation
 
-- Measured with a correlation coefficient.
- - 'Pearson' is the most common
++ Measured with a correlation coefficient ('Pearson' is the most common)
 
-- Range:
- - -1 Perfect Negative Correlation
- - 0 No Correlation
- - 1 Perfect positive Correlation
++ Range: 
+ + __-1 to 1:__ Perfect negative to Perfect positive Correlation
+ + __0:__  No Correlation
+--
+
 <br><br>
- 
-![](./man/figures/correlation-examples.svg)
+<img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Correlation_examples2.svg" height= 60% align="center">
 
 
 .footnote[
 Graphic from:
-Pierce, Rod,  2018, 'Correlation', Math Is Fun, Available at: <http://www.mathsisfun.com/data/correlation.html>. [Accessed 8 Jul 2019]
+Wikipedia: [Correlation and dependence:](https://en.wikipedia.org/wiki/Correlation_and_dependence)
+By DenisBoigelot, https://commons.wikimedia.org/w/index.php?curid=15165296 [Accessed 24 Sept 2019]
 ]
 ---
 
@@ -172,12 +173,30 @@ $$y= \alpha + \beta x + \epsilon$$
 
 ---
 
+## Regression equation
+
+$$y= \alpha + \beta x + \epsilon$$
++ $y$ - is our 'outcome variable'
++ $\alpha$ - is the 'intercept', the point where our line crosses y-axis
++ $\beta$ - is a coefficient (weight) applied to $x$ 
++ $x$ - is our predictor variable
++ $\epsilon$ - is the remaining ('residual') error
+
+--
+<br><br>
+
+We assume:
++ Linear relations
++ Data points are independent (not correlated)
++ Normally distributed error
++ Homoskedastic (error doesn't vary much)
+
+
+---
+
 ### Ordinary Least Squares 'OLS'
 
-+ Uses the residual error (ε) to work out the position of the line.
---
-
-+ 'Residual'; distance between prediction and data point.
++ 'Residual' distance between prediction and data point ($\epsilon$).
 --
 
 + Sum would be zero, square and minimise 'sum of the squares'
@@ -208,19 +227,45 @@ summary(z)
 sjPlot::tab_model(z, show.df = TRUE, show.obs = TRUE)
 
 ```
+
 --
 
 <br>
 + We can test fit using f-tests, prediction error or the R<sup>2</sup> .
-+ R<sup>2</sup> is the proportion of variation in $y$, explained by $x$.
++ R<sup>2</sup> is the proportion of variation in $y$, explained by $x$ .
+
+
+---
+
+## Interpretation 
+
+We can now read this as:
+
+_For each increase of 1 in $x$,  $y$ increases by 1.25, starting at 5.48._
+
+<br><br>
+
+A common addition is to mean-centre and scale our variables:
++ Take away the mean, and divide by standard deviation (z-score).
+
+--
+
+<br><br>
+This converts our interpretation, so:
++ The intercept becomes the average $y$ value
++ $\beta$ becomse the change in $y$ for each standard deviation increase in $x$ 
+
 
 ---
 
 ## Regression diagnostics (5)
 
 - A common check is to plot residuals:
-```{r lmplot, fig.retina=2, fig.align="center", fig.height=5.5, fig.width=8, fig.keep = 'last'}
+```{r rplotsetup, echo=FALSE}
 par(mfrow=c(2,2))
+```
+
+```{r lmplot, fig.retina=2, fig.align="center", fig.height=5.5, fig.width=8, fig.keep = 'last'}
 plot(z)
 ```
 
@@ -228,7 +273,31 @@ plot(z)
 ---
 class: center, middle
 
-# Exercise 1:  Correlation and Linear regression
+## Exercise 1:  Linear regression with single predictor
+
+---
+
+# More than one predictor?
+
+Our plots in earlier slide make sense in 2 dimensions, but regression is not limited by this.
+
+--
+
+<br><br>
+Our interpretation of each coefficient becomes: <br>
+___The change in $y$ whilst holding all others constant___
+
+<br><br>
+
+We can add more predictors with the `+`:
+```{r formula, eval=FALSE}
+lm(y ~ x1 + x2 + x3 + xn)
+```
+
+---
+class: center, middle
+
+## Exercise 2:  Linear regression with multiple predictors
 
 ---
 
@@ -236,35 +305,42 @@ class: center, middle
 
 - Our data are not necessarily linear. Death is binary, LOS is a count etc.
 
-- We can extend linear models idea for this as a Generalized Linear Model (GLM)
+- Can extend linear models ideas to the Generalized Linear Model (GLM)
 
 $$\large{g(\mu)= \alpha + \beta x}$$
+<br>
 Where $\mu$ is the expectation of Y, and $g$ is the link function
 
-- The link function transforms the data before fitting a model
+--
 
-- Can't use OLS for this, so we use 'maximum-likelihood'
++ The link function transforms the data before fitting a model
 
-- Many of the methods for `lm` are common to `glm`, but we can't use R<sup>2</sup>
+--
 
-- Other measures include AUC ('C-statistic'), and AIC or likelihood ratio tests.
++ Can't use OLS for this, so we use 'maximum-likelihood'
+
+--
+
++ Many of the methods for `lm` are common to `glm`, but we can't use R<sup>2</sup>
+
+--
+
++ Other measures include AUC ('C-statistic'), and AIC or likelihood ratio tests.
 
 ---
 
 ## Generalized Linear Models
 
 - Use a `family` argument with `poisson` for counts or `binomial` for binary outcomes.
-- Plotting residuals is not straight forward, and less common with `glm`
 
-```{r glm1, collapse=TRUE}
-library(NHSRdatasets)
-data(LOS_model)
-glm_binomial <- glm(Death ~ Age + LOS, data=LOS_model, family="binomial")
+```{r glm1, collapse=TRUE, warning=FALSE, message=FALSE}
+library(COUNT)
+data(medpar)
+
+glm_binomial <- glm(died ~ factor(age80) + los + factor(type), data=medpar, family="binomial")
 
 sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
-
 ModelMetrics::auc(glm_binomial)
-
 ```
 
 ---
@@ -281,7 +357,7 @@ ModelMetrics::auc(glm_binomial)
 --
 
 ```{r glm2}
-glm_binomial2<- glm(Death ~ Age + LOS + Age*LOS, data=LOS_model, family="binomial")
+glm_binomial2 <- glm(died ~ factor(age80) * los + factor(type), data=medpar, family="binomial")
 
 sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
 
@@ -301,8 +377,12 @@ ModelMetrics::auc(glm_binomial2)
 
 ```{r coeftransform, warning=FALSE, message=FALSE}
 cbind(Link=coef(glm_binomial2), Response=exp(coef(glm_binomial2)))
-
 ```
+
+---
+class: middle, center
+
+# Exercise 3: Generalized Linear Model (GLM)
 
 ---
 
@@ -311,11 +391,11 @@ cbind(Link=coef(glm_binomial2), Response=exp(coef(glm_binomial2)))
 - We can then use our model to predict our expected Y:
 - Need to decide what scale to predict on: `link` or `response`
 
-```{r glm3}
+```{r glm3, warning=FALSE, message=FALSE}
 library(dplyr)
-LOS_model$preds <- predict(glm_binomial2, type="response")
+medpar$preds <- predict(glm_binomial2, type="response")
 
-top_n(LOS_model,5) %>% knitr::kable(format = "html")
+top_n(medpar,5) %>% knitr::kable(format = "html")
 ```
 
 ---
@@ -325,7 +405,7 @@ top_n(LOS_model,5) %>% knitr::kable(format = "html")
 - Lets see the 10 cases with the highest predicted risk of death:
 
 ```{r glm4}
-LOS_model %>% arrange(desc(preds)) %>% top_n(10) %>% knitr::kable(format = "html")
+medpar %>% arrange(desc(preds)) %>% top_n(10) %>% knitr::kable(format = "html")
 
 ```
 
@@ -348,6 +428,5 @@ class: middle
 ---
 class: middle
 
-# Exercise 3: Examining Frammingham data
+# Exercise 5: Predicting 10-yeard CHD in Frammingham data
 
----

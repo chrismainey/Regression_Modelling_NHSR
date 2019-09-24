@@ -1,8 +1,8 @@
-### Exercise 2 ###
+### Exercise 3 ###
 # Building a Generalized Linear Model (GLM)
 
 
-## Here we will build a GLM to predict death using the NHSRdatasets package.
+## Here we will build a GLM to predict death using the LOS_models dataset from the NHSRdatasets package.
 
 #Load package, install if you don't have it.
 #install.packages("COUNT")
@@ -43,7 +43,7 @@ glm2<- glm(Death ~ scale(Age), data=LOS_model, family="binomial")
 # Lets look at the model summary
 summary(glm2)
 
-# Can you interpret scale now?
+## Can you interpret scale now?
 
 # The average log-odds of death is -1.57, incresing by 0.33 for each standard deviation 
 # increase in age
@@ -59,7 +59,7 @@ exp(coef(glm2))
 
 
 
-# Now add length of stay (LOS) into the model
+## Now add length of stay (LOS) into the model
 
 glm3<- glm(Death ~ Age + LOS, data=LOS_model, family="binomial")
 
@@ -67,7 +67,7 @@ glm3<- glm(Death ~ Age + LOS, data=LOS_model, family="binomial")
 summary(glm3)
 
 
-# How might you compare these two models, with and without LOS?
+## How might you compare these two models, with and without LOS?
 
 # AIC:
 
@@ -87,6 +87,8 @@ lrtest(glm1, glm3)
 # AIC is smaller (difference is >4) suggesting a 'larger' model is signficantly better.
 # Likelihood ratios do the same. 
 
+
+
 ## Are these results what you expect?  Why?
 # not really.  LOS is strong predictor, but it suggests age is not.  Surely older people have greater
 # chance of dying?  Maybe they are linked, i.e. LOS is more or less predictive for older patietns than
@@ -102,13 +104,14 @@ summary(glm4)
 # sum of both
 
 
-## Is our model any good? Check the AUC, using thhe ModelMetrics, or yardstick packages
+## Is our model any good? Check the AUC, using the ModelMetrics, or yardstick packages
 
 ModelMetrics::auc(glm4)
-yardstick
 
 
-################ Prediction ######################
+
+
+################ Exercise 4: Prediction ######################
 
 # Let's use our models to predict.  We can predict back onto the same data, or new data, using the
 # `newdata` argument.  We will fit back to our data today, so we do not strictly need to specify it, 
@@ -181,5 +184,5 @@ ggplot(LOS_model, aes(x=preds, fill=factor(Death), col=factor(Death), group=fact
 
 
 # What do your plot(s) suggest?  The highest probabilities oare in the 'died' group.
-# There are fewer patients with low porbabilities in the died group. The median value looks
+# There are fewer patients with low probabilities in the died group. The median value looks
 # Median probability is higher in Died group.
