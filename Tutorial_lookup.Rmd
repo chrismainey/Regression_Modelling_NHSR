@@ -1,0 +1,59 @@
+---
+title: "Regression Commands"
+author: "Chris Mainey"
+date: "14/10/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+  comment = "#>",
+  collapse = TRUE,
+  fig.align = "center"
+)
+```
+
+
+The tutorial on regression model uses many different command, but most of them are simple and based on default `R` objects and methods.  Never-the-less, it takes time to learn, search and try these commands out, so this document is a summary of the commands show in the slides.  The will use the `LOS_model` dataset from the `NHSRdatasets` package, but will not usually show the output of each command.
+
+You can install/load the package and data with:
+```{r pckload, message=FALSE, warning=FALSE}
+install.packages("NHSRdatasets")
+
+library(NHSRdatasets)
+data(LOS_model)
+```
+
+# Correlaion
+
+Although we are not using correlation in the practical, it is mentioned inthe slides.
+
+```{r cars}
+# Correlation coefficient for Age and LOS
+cor(LOS_model$Age, LOS_model$LOS)
+
+# With a significane test:
+cor.test(LOS_model$Age, LOS_model$LOS)
+
+# Correaltion matrix plot of the data. frame (numeric columns 3 - 5)
+library(corrplot)
+
+M <-cor(LOS_model[3:5])
+corrplot(M, type="upper", order="hclust")
+
+```
+
+## Linear regression
+
+Linear regression is the building block for what we are looking at, and we will treate regressions as 'object', i.e. assinge each regression to a variable.
+
+```{r reg1}}
+#Linear model
+lm(LOS ~ Age, data=LOS_model)
+
+# Linear model assigned to variable
+mod1 <- lm(LOS ~ Age, data=LOS_model)
+
+
+```
+

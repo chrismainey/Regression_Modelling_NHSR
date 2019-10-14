@@ -54,7 +54,7 @@ NHS Foundation Trust&lt;/b&gt;&lt;/p&gt;
 - Generalized Linear Models using `glm`
  - Logistic Regression
  
---
+
 
 &lt;br&gt;
 ___Mixture of theory, examples and practical exercises___
@@ -65,28 +65,25 @@ ___Mixture of theory, examples and practical exercises___
 
 If two variables are related, we usually describe them as 'correlated'.
 
---
+
 
 &lt;br&gt;
-Often interested in strength of association
+Usually in "strength" and "direction" of association
 
 --
 
 &lt;br&gt;&lt;br&gt;
 Two analysis techniques commonly used to investigate:
 
---
 
 + ___Correlation:___ shows direction, and strength of association
 
---
-
-+ ___Regression:___ estimates how one variable, `\(x\)` (or more than one), predicts another, `\(y\)` .
++ ___Regression:___ estimate how one variable: `\(y\)` changes when we observed changes in another: `\(x\)` (or more than one)
 
 --
 
 &lt;br&gt;&lt;br&gt;
-Sometimes the effects of other variables interact/mask this ("confounding")
+Sometimes the effects of other variables interact/mask this (___"confounding"___)
 
 ---
 
@@ -265,13 +262,13 @@ sjPlot::tab_model(z, show.df = TRUE, show.obs = TRUE)
 &lt;tr&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;(Intercept)&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;5.48&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;3.25&amp;nbsp;&amp;ndash;&amp;nbsp;7.71&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;3.19&amp;nbsp;&amp;ndash;&amp;nbsp;7.77&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;x&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.25&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.05&amp;nbsp;&amp;ndash;&amp;nbsp;1.46&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.04&amp;nbsp;&amp;ndash;&amp;nbsp;1.46&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -298,17 +295,17 @@ sjPlot::tab_model(z, show.df = TRUE, show.obs = TRUE)
 
 We can now read this as:
 
-_For each increase of 1 in `\(x\)`,  `\(y\)` increases by 1.25, starting at 5.48._
++ _For each increase of 1 in `\(x\)`,  `\(y\)` increases by 1.25, starting at 5.48._
 
 &lt;br&gt;&lt;br&gt;
 
-A common addition is to mean-centre and scale our variables:
-+ Take away the mean, and divide by standard deviation (z-score).
+A common addition is to __"mean-centre and scale"__ our variables:
++ _Take away the mean, and divide by standard deviation (z-score)._
 
 --
 
 &lt;br&gt;&lt;br&gt;
-This converts our interpretation, so:
+This converts our interpretation:
 + The intercept becomes the average `\(y\)` value
 + `\(\beta\)` becomes the change in `\(y\)` for each standard deviation increase in `\(x\)` 
 
@@ -478,7 +475,7 @@ sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE,
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)3&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;2.61&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.23&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.66&amp;nbsp;&amp;ndash;&amp;nbsp;4.11&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.66&amp;nbsp;&amp;ndash;&amp;nbsp;4.12&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -508,6 +505,7 @@ ModelMetrics::auc(glm_binomial)
 glm_binomial2 &lt;- glm(died ~ factor(age80) * los + factor(type), data=medpar, family="binomial")
 
 sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
+#&gt; Waiting for profiling to be done...
 ```
 
 &lt;table style="border-collapse:collapse; border:none;"&gt;
@@ -526,14 +524,14 @@ sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;(Intercept)&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.57&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.10&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.46&amp;nbsp;&amp;ndash;&amp;nbsp;0.70&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.47&amp;nbsp;&amp;ndash;&amp;nbsp;0.70&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(age80)1&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.69&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.21&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.13&amp;nbsp;&amp;ndash;&amp;nbsp;2.54&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.13&amp;nbsp;&amp;ndash;&amp;nbsp;2.56&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.011&lt;/strong&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -547,14 +545,14 @@ sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)2&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.52&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.14&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.14&amp;nbsp;&amp;ndash;&amp;nbsp;2.02&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.14&amp;nbsp;&amp;ndash;&amp;nbsp;2.01&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.004&lt;/strong&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)3&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;2.62&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.23&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.67&amp;nbsp;&amp;ndash;&amp;nbsp;4.13&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.67&amp;nbsp;&amp;ndash;&amp;nbsp;4.14&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;

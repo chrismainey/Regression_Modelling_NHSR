@@ -64,7 +64,7 @@ NHS Foundation Trust</b></p>
 - Generalized Linear Models using `glm`
  - Logistic Regression
  
---
+
 
 <br>
 ___Mixture of theory, examples and practical exercises___
@@ -75,28 +75,25 @@ ___Mixture of theory, examples and practical exercises___
 
 If two variables are related, we usually describe them as 'correlated'.
 
---
+
 
 <br>
-Often interested in strength of association
+Usually in "strength" and "direction" of association
 
 --
 
 <br><br>
 Two analysis techniques commonly used to investigate:
 
---
 
 + ___Correlation:___ shows direction, and strength of association
 
---
-
-+ ___Regression:___ estimates how one variable, $x$ (or more than one), predicts another, $y$ .
++ ___Regression:___ estimate how one variable: $y$ changes when we observed changes in another: $x$ (or more than one)
 
 --
 
 <br><br>
-Sometimes the effects of other variables interact/mask this ("confounding")
+Sometimes the effects of other variables interact/mask this (___"confounding"___)
 
 ---
 
@@ -241,17 +238,17 @@ sjPlot::tab_model(z, show.df = TRUE, show.obs = TRUE)
 
 We can now read this as:
 
-_For each increase of 1 in $x$,  $y$ increases by 1.25, starting at 5.48._
++ _For each increase of 1 in $x$,  $y$ increases by 1.25, starting at 5.48._
 
 <br><br>
 
-A common addition is to mean-centre and scale our variables:
-+ Take away the mean, and divide by standard deviation (z-score).
+A common addition is to __"mean-centre and scale"__ our variables:
++ _Take away the mean, and divide by standard deviation (z-score)._
 
 --
 
 <br><br>
-This converts our interpretation, so:
+This converts our interpretation:
 + The intercept becomes the average $y$ value
 + $\beta$ becomes the change in $y$ for each standard deviation increase in $x$ 
 
