@@ -2,7 +2,8 @@
 title: "Regression Commands"
 author: "Chris Mainey"
 date: "14/10/2019"
-output: pdf_document
+output:
+  pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -13,22 +14,23 @@ knitr::opts_chunk$set(echo = TRUE,
 )
 ```
 
+# Tutorial Cheatsheet
 
 The tutorial on regression model uses many different command, but most of them are simple and based on default `R` objects and methods.  Never-the-less, it takes time to learn, search and try these commands out, so this document is a summary of the commands show in the slides.  The will use the `LOS_model` dataset from the `NHSRdatasets` package, but will not usually show the output of each command.
 
 You can install/load the package and data with:
-```{r pckload, message=FALSE, warning=FALSE}
+```{r pckload, eval=FALSE, message=FALSE, warning=FALSE}
 install.packages("NHSRdatasets")
 
 library(NHSRdatasets)
 data(LOS_model)
 ```
 
-# Correlaion
+# Correlation
 
-Although we are not using correlation in the practical, it is mentioned inthe slides.
+Although we are not using correlation in the practical, it is mentioned in the slides.
 
-```{r cars}
+```{r cor, eval=FALSE}
 # Correlation coefficient for Age and LOS
 cor(LOS_model$Age, LOS_model$LOS)
 
@@ -43,17 +45,52 @@ corrplot(M, type="upper", order="hclust")
 
 ```
 
-## Linear regression
+# Linear regression
 
-Linear regression is the building block for what we are looking at, and we will treate regressions as 'object', i.e. assinge each regression to a variable.
+Linear regression is the building block for what we are looking at, and we will treat regressions as 'object', i.e. asign each regression to a variable.
 
-```{r reg1}}
+```{r reg1, eval=FALSE}
 #Linear model
 lm(LOS ~ Age, data=LOS_model)
 
-# Linear model assigned to variable
-mod1 <- lm(LOS ~ Age, data=LOS_model)
+# Linear model assigned to variable, this includes two parameters, 
+# age and death, with death as a categorical
+mod1 <- lm(LOS ~ Age + factor(Death), data=LOS_model)
 
+# View model summary
+summary(mod1)
+
+# Exctract coefficients
+coef(mod1)
+
+# calculate confidence interval
+confint(model1)
+
+# plot the residuals
+plot(mod1)
+
+
+# interaction model
+mod2 <- lm(LOS ~ Age *factor(Death), data=LOS_model)
+
+# Predict from you model
+predict(mod2, newdata=my_newdata)
+
+```
+
+# Generalized Linear Models (GLM)
+
+GLMs share most of the architecture of linear models, with the additional 'family' argument
+
+```{r glm, eval=FALSE}
+# GLM to nodel death as binary (binomial).  We'll also mean-centre and scale then
+mod3 <- glm(Death ~ scale(Age) + scale(LOS), data=LOS_model, family="binomial")
+
+# Extract AIC
+aic(mod3)
+
+# predict on scasle of the data
+predict(mod3, newdata=my_data, type = "response")
 
 ```
 
