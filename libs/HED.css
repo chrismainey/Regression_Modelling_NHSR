@@ -8,7 +8,6 @@ body,
 html {
 	margin: 0;
 	padding: 5pt;
-	height: 100%;
 
 }
 
@@ -123,8 +122,8 @@ ul, menu, dir {
     margin-inline-start: 1px;
     margin-inline-end: 0px;
     padding-inline-start: 30px;
-    line-height: 1.6em;
-    font-size: 100%;
+    line-height: 1.5em;
+    font-size: 95%;
     margin: 0px 0px 10px 0px;
 }
 
@@ -162,6 +161,7 @@ ul, menu, dir {
 }
 .remark-inline-code {
   background: #F5F5F5;
+  font-size: 95%;
 }
 .remark-slide {
   height: 100%;
@@ -315,7 +315,7 @@ pre {margin: 0}
   margin: auto;
   border-top: 1px solid #666;
   border-bottom: 1px solid #666;
-  font-size: 16px;
+  font-size: 14px;
 }
 .remark-slide table thead th { border-bottom: 1px solid #ddd; }
 th, td { padding: 5px; }

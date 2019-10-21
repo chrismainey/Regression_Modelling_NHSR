@@ -68,7 +68,7 @@ If two variables are related, we usually describe them as 'correlated'.
 
 
 &lt;br&gt;
-Usually in "strength" and "direction" of association
+Usually interested in "strength" and "direction" of association
 
 --
 
@@ -295,12 +295,12 @@ sjPlot::tab_model(z, show.df = TRUE, show.obs = TRUE)
 
 We can now read this as:
 
-+ _For each increase of 1 in `\(x\)`,  `\(y\)` increases by 1.25, starting at 5.48._
++ ___"For each increase of 1 in `\(x\)`,  `\(y\)` increases by 1.25, starting at 5.48."___
 
 &lt;br&gt;&lt;br&gt;
 
 A common addition is to __"mean-centre and scale"__ our variables:
-+ _Take away the mean, and divide by standard deviation (z-score)._
++ ___"Take away the mean, and divide by standard deviation (z-score)."___
 
 --
 
@@ -338,7 +338,7 @@ Our plots in earlier slides make sense in 2 dimensions, but regression is not li
 
 &lt;br&gt;&lt;br&gt;
 Our interpretation of each coefficient becomes: &lt;br&gt;
-___The change in `\(y\)` whilst holding all others constant___
++ ___"The change in `\(y\)` whilst holding all others constant"___
 
 &lt;br&gt;&lt;br&gt;
 
@@ -355,12 +355,12 @@ lm(y ~ x1 + x2 + x3 + xn)
 How do we enter categorical variables into a model?
 
 + Models won't understand text
-+ If we provide a numeric category, it will see it as numeric
++ If we provide a numered category, `R` sees it as numeric
 --
 
-+ `R` has a built in data type: `factors`
-
-`Factors` are 'dummy coded:' _pivotted to binary columns_
+`Factors` are 'dummy coded:' 
++ _pivotted to binary columns_
++ Contain a reference level
 --
 
 + If we have a categories: "A", "B" &amp; "C", we get:
@@ -434,7 +434,7 @@ sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE,
 &lt;table style="border-collapse:collapse; border:none;"&gt;
 &lt;tr&gt;
 &lt;th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; "&gt;&amp;nbsp;&lt;/th&gt;
-&lt;th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; "&gt;1=Died;0=Alive&lt;/th&gt;
+&lt;th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; "&gt;1=Died; 0=Alive&lt;/th&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; "&gt;Predictors&lt;/td&gt;
@@ -511,7 +511,7 @@ sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE
 &lt;table style="border-collapse:collapse; border:none;"&gt;
 &lt;tr&gt;
 &lt;th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; "&gt;&amp;nbsp;&lt;/th&gt;
-&lt;th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; "&gt;1=Died;0=Alive&lt;/th&gt;
+&lt;th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; "&gt;1=Died; 0=Alive&lt;/th&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; "&gt;Predictors&lt;/td&gt;
@@ -873,11 +873,23 @@ class: middle
 
 - Correlation shows the direction and strength of association
 - Regression allows us to quantify the relationships
+
+--
+
 - We can use a single, or multiple, predictors 
 - Regression coefficients explain how much a change in `\(x\)` affects `\(y\)`
+
+--
+
 - R&lt;sup&gt;2&lt;/sup&gt; is a common measure of in linear models, C-statistic/AUC/ROC in logistic models
+
+--
+
 - Generalized Linear Model (`glm`) allow linear models on a transformed scale, e.g. logistic regression for binary variables
 - Interactions terms allow us to examine confounded predictors
+
+--
+
 - We can predict from our model objects, but must remember the link-function scale in `glm`
 
 ---

@@ -47,7 +47,7 @@ corrplot(M, type="upper", order="hclust")
 
 # Linear regression
 
-Linear regression is the building block for what we are looking at, and we will treat regressions as 'object', i.e. asign each regression to a variable.
+Linear regression is the building block for what we are looking at, and we will treat regressions as 'object', i.e. assign each regression to a variable.
 
 ```{r reg1, eval=FALSE}
 #Linear model
@@ -73,7 +73,7 @@ plot(mod1)
 # interaction model
 mod2 <- lm(LOS ~ Age *factor(Death), data=LOS_model)
 
-# Predict from you model
+# Predict from your model
 predict(mod2, newdata=my_newdata)
 
 ```
