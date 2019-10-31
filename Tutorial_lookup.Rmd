@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE,
 
 # Tutorial Cheatsheet
 
-The tutorial on regression model uses many different command, but most of them are simple and based on default `R` objects and methods.  Never-the-less, it takes time to learn, search and try these commands out, so this document is a summary of the commands show in the slides.  The will use the `LOS_model` dataset from the `NHSRdatasets` package, but will not usually show the output of each command.
+The tutorial on regression model uses many different commands, but most of them are simple and based on default `R` objects and methods.  Never-the-less, it takes time to learn, search and try these commands out, so this document is a summary of the commands shown in the slides.  The will use the `LOS_model` dataset from the `NHSRdatasets` package, but will not usually show the output of each command.
 
 You can install/load the package and data with:
 ```{r pckload, eval=FALSE, message=FALSE, warning=FALSE}
@@ -71,7 +71,7 @@ plot(mod1)
 
 
 # interaction model
-mod2 <- lm(LOS ~ Age *factor(Death), data=LOS_model)
+mod2 <- lm(LOS ~ Age * factor(Death), data=LOS_model)
 
 # Predict from your model
 predict(mod2, newdata=my_newdata)

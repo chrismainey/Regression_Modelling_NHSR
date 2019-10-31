@@ -97,6 +97,9 @@ summary(lm2)
 
 
 
+
+
+
 ####### Part 2: Multiple regression  ##########
 
 # We established BMI as predictive, but it only explained ~10% of variation.

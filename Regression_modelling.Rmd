@@ -17,12 +17,14 @@ output:
 class: center
 
 
-```{r setup, echo=FALSE}
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
   comment = "#>",
   collapse = TRUE,
   fig.align = "center"
 )
+library(Cairo)
+library(extrafont)
 ```
 
 
@@ -193,10 +195,10 @@ We assume:
 
 ### Ordinary Least Squares 'OLS'
 
-+ 'Residual' distance between prediction and data point ($\epsilon$).
++ 'Residual' distance between prediction and data point ( $\epsilon$ ).
 --
 
-+ Sum would be zero, square and minimise 'sum of the squares'
++ Sum would be zero, so we square and minimise _'sum of the squares'_
 --
 
 ```{r lm2, fig.retina=2, fig.align="center", fig.height=5, fig.width=6}
@@ -215,19 +217,8 @@ summary(z)
 ```
 
 
----
-
-## Regression models (4)
-
-+ Usually view model details with `summary`, but I'm using a function from `sjPlot` here.
-```{r lm4}
-sjPlot::tab_model(z, show.df = TRUE, show.obs = TRUE)
-
-```
-
 --
 
-<br>
 + We can test fit using f-tests, prediction error or the R<sup>2</sup> .
 + R<sup>2</sup> is the proportion of variation in $y$, explained by $x$ .
 
@@ -283,7 +274,7 @@ Our plots in earlier slides make sense in 2 dimensions, but regression is not li
 
 <br><br>
 Our interpretation of each coefficient becomes: <br>
-+ ___"The change in $y$ whilst holding all others constant"___
++ ___"The change in $y$ whilst holding all others parameters constant"___
 
 <br><br>
 
@@ -350,7 +341,7 @@ Where $\mu$ is the expectation of Y, and $g$ is the link function
 
 ## Generalized Linear Models
 
-- Use a `family` argument with `poisson` for counts or `binomial` for binary outcomes.
+- `family` argument with `poisson` for counts or `binomial` for binary outcomes.
 
 ```{r glm1, collapse=TRUE, warning=FALSE, message=FALSE}
 library(COUNT)
@@ -359,6 +350,7 @@ data(medpar)
 glm_binomial <- glm(died ~ factor(age80) + los + factor(type), data=medpar, family="binomial")
 
 sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
+
 ModelMetrics::auc(glm_binomial)
 ```
 
@@ -431,6 +423,7 @@ class: middle
 # Summary
 
 - Correlation shows the direction and strength of association
+
 - Regression allows us to quantify the relationships
 
 --
