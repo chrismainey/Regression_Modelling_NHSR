@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Regression Modelling in R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Chris Mainey chris.mainey@uhb.nhs.uk" />
+    <link href="libs/font-awesome-5.3.1/css/fontawesome-all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="libs\HED.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center
+
+
+
+
+
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+## Regression Modelling in `R`
+
+&lt;br&gt;
+
+.pull-left[
+__Chris Mainey__
+&lt;p style="font-size:26;")&gt;Intelligence Analyst&lt;br&gt;
+&lt;b&gt;University Hospitals Birmingham 
+NHS Foundation Trust&lt;/b&gt;&lt;/p&gt;
+&lt;br&gt;
+&lt;span style="font-size:26;"&gt;[chris.mainey@uhb.nhs.uk](mailto:chris.mainey@uhb.nhs.uk)&lt;/span&gt;&lt;br&gt;
+<i class="fab  fa-twitter "></i> &lt;a href="https://twitter.com/chrismainey?s=09" style="line-height:2;"&gt;@chrismainey&lt;/a&gt;
+]
+
+.pull-right[
+&lt;img src= "./man/figures/NHSR-logo.png" width=80% height=80%&gt;
+&lt;br&gt;&lt;br&gt;
+&lt;img src= "./man/figures/HI.png" width=80% height=80%&gt;
+]
+
+
+---
+
+# Workshop Overview
+
+- Correlation
+- Linear Regression
+ - Specifying a model with `lm`
+ - Interpreting the model output
+ - Assessing model fit
+- Multiple Regression
+- Prediction
+- Generalized Linear Models using `glm`
+ - Logistic Regression
+ 
+
+
+&lt;br&gt;
+___Mixture of theory, examples and practical exercises___
+
+---
+
+# Relationships between variables
+
+If two variables are related, we usually describe them as 'correlated'.
+
+
+
+&lt;br&gt;
+Usually interested in "strength" and "direction" of association
+
+--
+
+&lt;br&gt;&lt;br&gt;
+Two analysis techniques commonly used to investigate:
+
+
++ ___Correlation:___ shows direction, and strength of association
+
++ ___Regression:___ estimate how one variable: `\(y\)` changes when we observed changes in another: `\(x\)` (or more than one)
+
+--
+
+&lt;br&gt;&lt;br&gt;
+Sometimes the effects of other variables interact/mask this (___"confounding"___)
+
+---
+
+
+
+## Example:
+
+```r
+x &lt;- rnorm(50, 10, 4)
+y &lt;- runif(50, min = 0.5, 10) + (1.25*x)
+
+a&lt;-ggplot(data.frame(x,y,z), aes(x=x,y=y))+
+  geom_point(col="dodgerblue2", alpha=0.65)
+a
+```
+
+&lt;img src="Regression_modelling_files/figure-html/lm1-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Correlation
+
++ Measured with a correlation coefficient ('Pearson' is the most common)
+
++ Range: 
+ + __-1 to 1:__ Perfect negative to Perfect positive Correlation
+ + __0:__  No Correlation
+--
+
+&lt;br&gt;&lt;br&gt;
+&lt;img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Correlation_examples2.svg" height= 60% align="center"&gt;
+
+
+.footnote[
+Graphic from:
+Wikipedia: [Correlation and dependence:](https://en.wikipedia.org/wiki/Correlation_and_dependence)
+By DenisBoigelot, https://commons.wikimedia.org/w/index.php?curid=15165296 [Accessed 24 Sept 2019]
+]
+---
+
+# Correlation in R
+
+Lets check the correlation in our generated data:
+
+
+```r
+cor(x, y)
+#&gt; [1] 0.8650106
+
+cor.test(x,y)
+#&gt; 
+#&gt; 	Pearson's product-moment correlation
+#&gt; 
+#&gt; data:  x and y
+#&gt; t = 11.944, df = 48, p-value = 5.53e-16
+#&gt; alternative hypothesis: true correlation is not equal to 0
+#&gt; 95 percent confidence interval:
+#&gt;  0.7727115 0.9214882
+#&gt; sample estimates:
+#&gt;       cor 
+#&gt; 0.8650106
+```
+
++ `cor.test` is a correlation and a t-test.
++ Different types of correlation coefficient, default is 'Pearson'
++ Doesn't work for different distributions, data types or more variables
+
+---
+
+### Regression models (1)
+
+Regression gives us more options than correlation:
+
+
+```r
+z &lt;- lm(y~x)
+
+print(a&lt;- a + geom_smooth(method="lm", col="red", linetype=2))
+```
+
+&lt;img src="Regression_modelling_files/figure-html/lm3-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+
+`$$y= \alpha + \beta x + \epsilon$$`
+
+---
+
+## Regression equation
+
+`$$y= \alpha + \beta x + \epsilon$$`
++ `\(y\)` - is our 'outcome variable'
++ `\(\alpha\)` - is the 'intercept', the point where our line crosses y-axis
++ `\(\beta\)` - is a coefficient (weight) applied to `\(x\)` 
++ `\(x\)` - is our predictor variable
++ `\(\epsilon\)` - is the remaining ('residual') error
+
+--
+&lt;br&gt;&lt;br&gt;
+
+We assume:
++ Linear relations
++ Data points are independent (not correlated)
++ Normally distributed error
++ Homoskedastic (error doesn't vary much)
+
+
+---
+
+### Ordinary Least Squares 'OLS'
+
++ 'Residual' distance between prediction and data point ( `\(\epsilon\)` ).
+--
+
++ Sum would be zero, so we square and minimise _'sum of the squares'_
+--
+
+
+```r
+a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5, arrow=arrow(length=unit(0.2,"cm")))
+```
+
+&lt;img src="Regression_modelling_files/figure-html/lm2-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Regression models (3)
+
++ We created an `lm` object called `z`.  You can then use that object with other functions like `summary`, `predict`, `plot` etc.
+
+
+
+```r
+summary(z)
+#&gt; 
+#&gt; Call:
+#&gt; lm(formula = y ~ x)
+#&gt; 
+#&gt; Residuals:
+#&gt;     Min      1Q  Median      3Q     Max 
+#&gt; -4.9575 -2.2614  0.4444  2.4475  4.1663 
+#&gt; 
+#&gt; Coefficients:
+#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    
+#&gt; (Intercept)   5.4776     1.1386   4.811 1.53e-05 ***
+#&gt; x             1.2507     0.1047  11.944 5.53e-16 ***
+#&gt; ---
+#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#&gt; 
+#&gt; Residual standard error: 2.77 on 48 degrees of freedom
+#&gt; Multiple R-squared:  0.7482,	Adjusted R-squared:  0.743 
+#&gt; F-statistic: 142.7 on 1 and 48 DF,  p-value: 5.53e-16
+```
+
+
+--
+
++ We can test fit using f-tests, prediction error or the R&lt;sup&gt;2&lt;/sup&gt; .
++ R&lt;sup&gt;2&lt;/sup&gt; is the proportion of variation in `\(y\)`, explained by `\(x\)` .
+
+
+---
+
+## Interpretation 
+
+We can now read this as:
+
++ ___"For each increase of 1 in `\(x\)`,  `\(y\)` increases by 1.25, starting at 5.48."___
+
+&lt;br&gt;&lt;br&gt;
+
+A common addition is to __"mean-centre and scale"__ our variables:
++ ___"Take away the mean, and divide by standard deviation (z-score)."___
+
+--
+
+&lt;br&gt;&lt;br&gt;
+This converts our interpretation:
++ The intercept becomes the average `\(y\)` value
++ `\(\beta\)` becomes the change in `\(y\)` for each standard deviation increase in `\(x\)` 
+
+
+---
+
+## Regression diagnostics (5)
+
+- A common check is to plot residuals:
+
+```r
+plot(z)
+```
+
+&lt;img src="Regression_modelling_files/figure-html/lmplot-1.png" width="576" style="display: block; margin: auto;" /&gt;
+
+
+---
+class: center, middle
+
+## Exercise 1:  Linear regression with a single predictor
+
+---
+
+# More than one predictor?
+
+Our plots in earlier slides make sense in 2 dimensions, but regression is not limited to this.
+
+--
+
+&lt;br&gt;&lt;br&gt;
+Our interpretation of each coefficient becomes: &lt;br&gt;
++ ___"The change in `\(y\)` whilst holding all others parameters constant"___
+
+&lt;br&gt;&lt;br&gt;
+
+We can add more predictors with the `+`:
+
+```r
+lm(y ~ x1 + x2 + x3 + xn)
+```
+
+---
+
+## Categorical variables
+
+How do we enter categorical variables into a model?
+
++ Models won't understand text
++ If we provide a numered category, `R` sees it as numeric
+--
+
+`Factors` are 'dummy coded:' 
++ _pivotted to binary columns_
++ Contain a reference level
+--
+
++ If we have a categories: "A", "B" &amp; "C", we get:
+
+```r
+a&lt;- data.frame(Category = factor(c("A", "B", "C", "C", "A", "B")))
+model.matrix(~., a)
+#&gt;   (Intercept) CategoryB CategoryC
+#&gt; 1           1         0         0
+#&gt; 2           1         1         0
+#&gt; 3           1         0         1
+#&gt; 4           1         0         1
+#&gt; 5           1         0         0
+#&gt; 6           1         1         0
+#&gt; attr(,"assign")
+#&gt; [1] 0 1 1
+#&gt; attr(,"contrasts")
+#&gt; attr(,"contrasts")$Category
+#&gt; [1] "contr.treatment"
+```
+
+---
+class: middle
+
+## Exercise 2:  Linear regression with multiple predictors
+
+---
+
+## What about non-linear data?
+
+- Our data are not necessarily linear. Death is binary, LOS is a count etc.
+
+- Can extend linear models ideas to the Generalized Linear Model (GLM)
+
+`$$\large{g(\mu)= \alpha + \beta x}$$`
+&lt;br&gt;
+Where `\(\mu\)` is the expectation of Y, and `\(g\)` is the link function
+
+--
+
++ The link function transforms the data before fitting a model
+
+--
+
++ Can't use OLS for this, so we use 'maximum-likelihood'
+
+--
+
++ Many of the methods for `lm` are common to `glm`, but we can't use R&lt;sup&gt;2&lt;/sup&gt;
+
+--
+
++ Other measures include AUC ('C-statistic'), and AIC or likelihood ratio tests.
+
+---
+
+## Generalized Linear Models
+
+- `family` argument with `poisson` for counts or `binomial` for binary outcomes.
+
+
+```r
+library(COUNT)
+data(medpar)
+
+glm_binomial &lt;- glm(died ~ factor(age80) + los + factor(type), data=medpar, family="binomial")
+
+sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
+```
+
+&lt;table style="border-collapse:collapse; border:none;"&gt;
+&lt;tr&gt;
+&lt;th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; "&gt;&amp;nbsp;&lt;/th&gt;
+&lt;th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; "&gt;1=Died;0=Alive&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; "&gt;Predictors&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;Odds Ratios&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;std. Error&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;CI&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;p&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;(Intercept)&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.55&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.10&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.46&amp;nbsp;&amp;ndash;&amp;nbsp;0.67&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(age80)1&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.93&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.13&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.50&amp;nbsp;&amp;ndash;&amp;nbsp;2.48&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;Length of Stay&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.96&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.01&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.95&amp;nbsp;&amp;ndash;&amp;nbsp;0.98&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)2&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.52&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.14&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.14&amp;nbsp;&amp;ndash;&amp;nbsp;2.02&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.004&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)3&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;2.61&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.23&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.66&amp;nbsp;&amp;ndash;&amp;nbsp;4.12&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;"&gt;Observations&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="4"&gt;1495&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;/table&gt;
+
+```r
+
+ModelMetrics::auc(glm_binomial)
+#&gt; [1] 0.6372224
+```
+
+---
+
+## Interactions
+
+- 'Interactions' are where predictor variables affect each other.
+--
+
+- Can add these with `*` or `:` (check help for which to use)
+--
+
+
+```r
+glm_binomial2 &lt;- glm(died ~ factor(age80) * los + factor(type), data=medpar, family="binomial")
+
+sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
+#&gt; Waiting for profiling to be done...
+```
+
+&lt;table style="border-collapse:collapse; border:none;"&gt;
+&lt;tr&gt;
+&lt;th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; "&gt;&amp;nbsp;&lt;/th&gt;
+&lt;th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; "&gt;1=Died;0=Alive&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; "&gt;Predictors&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;Odds Ratios&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;std. Error&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;CI&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;p&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;(Intercept)&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.57&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.10&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.47&amp;nbsp;&amp;ndash;&amp;nbsp;0.70&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(age80)1&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.69&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.21&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.13&amp;nbsp;&amp;ndash;&amp;nbsp;2.56&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.011&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;Length of Stay&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.96&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.01&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.94&amp;nbsp;&amp;ndash;&amp;nbsp;0.98&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)2&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.52&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.14&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.14&amp;nbsp;&amp;ndash;&amp;nbsp;2.01&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.004&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)3&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;2.62&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.23&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.67&amp;nbsp;&amp;ndash;&amp;nbsp;4.14&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(age80)1:los&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.01&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.02&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.98&amp;nbsp;&amp;ndash;&amp;nbsp;1.05&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.419&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;"&gt;Observations&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="4"&gt;1495&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;/table&gt;
+
+```r
+ModelMetrics::auc(glm_binomial2)
+#&gt; [1] 0.6376572
+```
+
+---
+
+# Interpretation
+
++ Our model coefficients in `lm` were straight-forward multipliers
++ `glm` is similar, but it is on the scale of the link-function.
+ + log scale for `poisson` models, or logit (log odds) scale for `binomial`
++ Common to transform output back to response scale
++ giving Incident Rate Ratios for `poisson`, or Odds Ratios for `binomial`
+
+
+```r
+cbind(Link=coef(glm_binomial2), Response=exp(coef(glm_binomial2)))
+#&gt;                           Link  Response
+#&gt; (Intercept)        -0.56160376 0.5702937
+#&gt; factor(age80)1      0.52537865 1.6910991
+#&gt; los                -0.04073769 0.9600809
+#&gt; factor(type)2       0.41743940 1.5180694
+#&gt; factor(type)3       0.96477095 2.6241865
+#&gt; factor(age80)1:los  0.01450661 1.0146123
+```
+
+---
+class: middle
+
+# Exercise 3: Generalized Linear Model (GLM)
+
+---
+
+## Prediction (1)
+
+- We can then use our model to predict our expected `\(Y\)`:
+- Need to decide what scale to predict on: `link` or `response`
+
+
+```r
+library(dplyr)
+medpar$preds &lt;- predict(glm_binomial2, type="response")
+
+top_n(medpar,5) %&gt;% knitr::kable(format = "html")
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; los &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; hmo &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; white &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; died &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; age80 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; type &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; type1 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; type2 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; type3 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; provnum &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; preds &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 030017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.7114250 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 030061 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6894160 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 032000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.7060100 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 032002 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6894160 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 032002 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6950045 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+## Prediction (2)
+
+- Lets see the 10 cases with the highest predicted risk of death:
+
+
+```r
+medpar %&gt;% arrange(desc(preds)) %&gt;% top_n(10) %&gt;% knitr::kable(format = "html")
+#&gt; Selecting by preds
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; los &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; hmo &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; white &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; died &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; age80 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; type &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; type1 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; type2 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; type3 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; provnum &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; preds &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 030017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.7114250 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 032000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.7060100 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 032002 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6950045 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 030061 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6894160 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 032002 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6894160 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 030061 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6837716 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 030061 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6665153 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 030061 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6665153 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 030069 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6606596 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 032000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6547543 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+class: middle
+
+# Exercise 4: Predicting from models
+
+---
+# Summary
+
+- Correlation shows the direction and strength of association
+
+- Regression allows us to quantify the relationships
+
+--
+
+- We can use a single, or multiple, predictors 
+- Regression coefficients explain how much a change in `\(x\)` affects `\(y\)`
+
+--
+
+- R&lt;sup&gt;2&lt;/sup&gt; is a common measure of in linear models, C-statistic/AUC/ROC in logistic models
+
+--
+
+- Generalized Linear Model (`glm`) allow linear models on a transformed scale, e.g. logistic regression for binary variables
+- Interactions terms allow us to examine confounded predictors
+
+--
+
+- We can predict from our model objects, but must remember the link-function scale in `glm`
+
+---
+class: middle
+
+# Exercise 5: Predicting 10-year CHD in Framingham data
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
