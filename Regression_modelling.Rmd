@@ -37,7 +37,7 @@ library(extrafont)
 
 .pull-left[
 __Chris Mainey__
-<p style="font-size:26;")>Intelligence Analyst<br>
+<p style="font-size:26;")>Senior Data Scientist<br>
 <b>University Hospitals Birmingham 
 NHS Foundation Trust</b></p>
 <br>
@@ -94,7 +94,7 @@ Two analysis techniques commonly used to investigate:
 
 --
 
-<br><br>
+<br>
 Sometimes the effects of other variables interact/mask this (___"confounding"___)
 
 ---
@@ -161,9 +161,8 @@ cor.test(x,y)
 
 Regression gives us more options than correlation:
 
-```{r lm3, fig.retina=2, fig.align="center", fig.height=4.8, fig.width=6}
+```{r lm3, fig.align="center", fig.height=4.8, fig.retina=2, fig.width=6, message=FALSE, warning=FALSE}
 z <- lm(y~x)
-
 print(a<- a + geom_smooth(method="lm", col="red", linetype=2))
 ```
 
@@ -201,7 +200,7 @@ We assume:
 + Sum would be zero, so we square and minimise _'sum of the squares'_
 --
 
-```{r lm2, fig.retina=2, fig.align="center", fig.height=5, fig.width=6}
+```{r lm2, fig.align="center", fig.height=5, fig.retina=2, fig.width=6, message=FALSE, warning=FALSE}
 a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5, arrow=arrow(length=unit(0.2,"cm")))
 ```
 
@@ -241,14 +240,14 @@ A common addition is to __"mean-centre and scale"__ our variables:
 <br><br>
 This converts our interpretation:
 + The intercept becomes the average $y$ value
-+ $\beta$ becomes the change in $y$ for each standard deviation increase in $x$ 
++ $\beta$ becomes the change in $y$ for one standard deviation increase in $x$ 
 
 
 ---
 
 ## Regression diagnostics (5)
 
-- A common check is to plot residuals:
+A common check is to plot residuals:
 ```{r rplotsetup, eval=FALSE}
 plot(z)
 ```
@@ -289,16 +288,14 @@ lm(y ~ x1 + x2 + x3 + xn)
 
 How do we enter categorical variables into a model?
 
-+ Models won't understand text
-+ If we provide a numered category, `R` sees it as numeric
++ Models won't understand text, and numbers are numeric
+
 --
 
+<br>
 `Factors` are 'dummy coded:' 
-+ _pivotted to binary columns_
-+ Contain a reference level
---
-
-+ If we have a categories: "A", "B" & "C", we get:
++ _'pivotted' to binary columns_
++ Contain a reference level: with categories: "A", "B" & "C", we get:
 ```{r dummy, echo}
 a<- data.frame(Category = factor(c("A", "B", "C", "C", "A", "B")))
 model.matrix(~., a)
@@ -313,9 +310,9 @@ class: middle
 
 ## What about non-linear data?
 
-- Our data are not necessarily linear. Death is binary, LOS is a count etc.
+- Data are not necessarily linear. Death is binary, LOS is a count etc.
 
-- Can extend linear models ideas to the Generalized Linear Model (GLM)
+- We can use the Generalized Linear Model (GLM):
 
 $$\large{g(\mu)= \alpha + \beta x}$$
 <br>
@@ -341,7 +338,7 @@ Where $\mu$ is the expectation of Y, and $g$ is the link function
 
 ## Generalized Linear Models
 
-- `family` argument with `poisson` for counts or `binomial` for binary outcomes.
+- `family` argument was set to `binomial` for binary outcomes.
 
 ```{r glm1, collapse=TRUE, warning=FALSE, message=FALSE}
 library(COUNT)
@@ -388,7 +385,7 @@ cbind(Link=coef(glm_binomial2), Response=exp(coef(glm_binomial2)))
 ---
 class: middle
 
-# Exercise 3: Generalized Linear Model (GLM)
+## Exercise 3: Generalized Linear Model (GLM)
 
 ---
 
