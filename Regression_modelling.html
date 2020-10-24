@@ -6,6 +6,8 @@
     <meta name="author" content="Chris Mainey chris.mainey@uhb.nhs.uk" />
     <script src="libs/header-attrs-2.5/header-attrs.js"></script>
     <link href="libs/font-awesome-5.3.1/css/fontawesome-all.min.css" rel="stylesheet" />
+    <link href="libs/panelset-0.2.4/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.4/panelset.js"></script>
     <link rel="stylesheet" href="libs/HED.css" type="text/css" />
   </head>
   <body>
@@ -20,14 +22,14 @@ class: center
 
 &lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
 
-## Regression Modelling in `R`
+# Regression Modelling in `R`
 
 &lt;br&gt;
 
 .pull-left[
 __Chris Mainey__
 &lt;p style="font-size:26;")&gt;Senior Data Scientist&lt;br&gt;
-&lt;b&gt;University Hospitals Birmingham 
+&lt;b&gt;University Hospitals Birmingham&lt;br&gt;
 NHS Foundation Trust&lt;/b&gt;&lt;/p&gt;
 &lt;br&gt;
 &lt;span style="font-size:26;"&gt;[chris.mainey@uhb.nhs.uk](mailto:chris.mainey@uhb.nhs.uk)&lt;/span&gt;&lt;br&gt;
@@ -79,7 +81,7 @@ Two analysis techniques commonly used to investigate:
 
 + ___Correlation:___ shows direction, and strength of association
 
-+ ___Regression:___ estimate how one variable: `\(y\)` changes when we observed changes in another: `\(x\)` (or more than one)
++ ___Regression:___ estimate how one variable: `\(y\)` changes when we observed changes in another: `\(x\)` (or more than one, `\(x_{i}\)`)
 
 --
 
@@ -101,7 +103,7 @@ a&lt;-ggplot(data.frame(x,y,z), aes(x=x,y=y))+
 a
 ```
 
-&lt;img src="Regression_modelling_files/figure-html/lm1-1.png" width="432" style="display: block; margin: auto;" /&gt;
+&lt;img src="Regression_modelling_files/figure-html/lm1-1.png" width="648" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -112,10 +114,11 @@ a
 + Range: 
  + __-1 to 1:__ Perfect negative to Perfect positive Correlation
  + __0:__  No Correlation
+
 --
 
-&lt;br&gt;&lt;br&gt;
-&lt;img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Correlation_examples2.svg" height= 60% align="center"&gt;
+&lt;br&gt;
+&lt;img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Correlation_examples2.svg" height="280" class="center"&gt;
 
 
 .footnote[
@@ -164,7 +167,7 @@ z &lt;- lm(y~x)
 print(a&lt;- a + geom_smooth(method="lm", col="red", linetype=2))
 ```
 
-&lt;img src="Regression_modelling_files/figure-html/lm3-1.png" width="432" style="display: block; margin: auto;" /&gt;
+&lt;img src="Regression_modelling_files/figure-html/lm3-1.png" width="648" style="display: block; margin: auto;" /&gt;
 
 
 `$$y= \alpha + \beta x + \epsilon$$`
@@ -173,22 +176,27 @@ print(a&lt;- a + geom_smooth(method="lm", col="red", linetype=2))
 
 ## Regression equation
 
-`$$y= \alpha + \beta x + \epsilon$$`
-+ `\(y\)` - is our 'outcome variable'
+`$$\large{y= \alpha + \beta_{i} x_{i} + \epsilon}$$`
+&lt;br&gt;
+.pull-left[
++ `\(y\)` - is our 'outcome', or 'dependent' variable
 + `\(\alpha\)` - is the 'intercept', the point where our line crosses y-axis
 + `\(\beta\)` - is a coefficient (weight) applied to `\(x\)` 
-+ `\(x\)` - is our predictor variable
++ `\(x\)` - is our 'predictor', or 'independent' variable
++ `\(i\)` - is our index, we can have `\(i\)` predictor variables, each with a coefficient
 + `\(\epsilon\)` - is the remaining ('residual') error
+]
 
 --
-&lt;br&gt;&lt;br&gt;
 
-We assume:
+.pull-right[
+
+We are making some assumptions:
 + Linear relations
 + Data points are independent (not correlated)
 + Normally distributed error
-+ Homoskedastic (error doesn't vary much)
-
++ Homoskedastic (error doesn't vary across the range)
+]
 
 ---
 
@@ -205,7 +213,7 @@ We assume:
 a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5, arrow=arrow(length=unit(0.2,"cm")))
 ```
 
-&lt;img src="Regression_modelling_files/figure-html/lm2-1.png" width="432" style="display: block; margin: auto;" /&gt;
+&lt;img src="Regression_modelling_files/figure-html/lm2-1.png" width="648" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -248,22 +256,82 @@ summary(z)
 
 ## Interpretation 
 
+
+
 We can now read this as:
 
 + ___"For each increase of 1 in `\(x\)`,  `\(y\)` increases by 1.25, starting at 5.48."___
 
-&lt;br&gt;&lt;br&gt;
-
 A common addition is to __"mean-centre and scale"__ our variables:
-+ ___"Take away the mean, and divide by standard deviation (z-score)."___
 
---
+.panelset[
 
+.panel[.panel-name[Original]
+
+```r
+z &lt;- lm(y~x)
+summary(z)
+#&gt; 
+#&gt; Call:
+#&gt; lm(formula = y ~ x)
+#&gt; 
+#&gt; Residuals:
+#&gt;     Min      1Q  Median      3Q     Max 
+#&gt; -4.9575 -2.2614  0.4444  2.4475  4.1663 
+#&gt; 
+#&gt; Coefficients:
+#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    
+#&gt; (Intercept)   5.4776     1.1386   4.811 1.53e-05 ***
+#&gt; x             1.2507     0.1047  11.944 5.53e-16 ***
+#&gt; ---
+#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#&gt; 
+#&gt; Residual standard error: 2.77 on 48 degrees of freedom
+#&gt; Multiple R-squared:  0.7482,	Adjusted R-squared:  0.743 
+#&gt; F-statistic: 142.7 on 1 and 48 DF,  p-value: 5.53e-16
+```
+]
+
+.panel[.panel-name[Scaled]
+
+```r
+z &lt;- lm(y~scale(x))
+summary(z)
+#&gt; 
+#&gt; Call:
+#&gt; lm(formula = y ~ scale(x))
+#&gt; 
+#&gt; Residuals:
+#&gt;     Min      1Q  Median      3Q     Max 
+#&gt; -4.9575 -2.2614  0.4444  2.4475  4.1663 
+#&gt; 
+#&gt; Coefficients:
+#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    
+#&gt; (Intercept)  18.2469     0.3917   46.59  &lt; 2e-16 ***
+#&gt; scale(x)      4.7256     0.3956   11.94 5.53e-16 ***
+#&gt; ---
+#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#&gt; 
+#&gt; Residual standard error: 2.77 on 48 degrees of freedom
+#&gt; Multiple R-squared:  0.7482,	Adjusted R-squared:  0.743 
+#&gt; F-statistic: 142.7 on 1 and 48 DF,  p-value: 5.53e-16
+```
+
+]
+
+.panel[.panel-name[Interpretation]
 &lt;br&gt;&lt;br&gt;
 This converts our interpretation:
 + The intercept becomes the average `\(y\)` value
 + `\(\beta\)` becomes the change in `\(y\)` for one standard deviation increase in `\(x\)` 
 
+&lt;br&gt;
+
+So...
++ Average `\(x\)` is 18.24.69
++ Each increase of 1 standard deviation in `\(x\)` increase `\(y\)` by 4.7256
+]
+]
 
 ---
 
@@ -275,7 +343,7 @@ A common check is to plot residuals:
 plot(z)
 ```
 
-&lt;img src="Regression_modelling_files/figure-html/lmplot-1.png" width="576" style="display: block; margin: auto;" /&gt;
+&lt;img src="Regression_modelling_files/figure-html/lmplot-1.png" width="648" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -292,7 +360,7 @@ Our plots in earlier slides make sense in 2 dimensions, but regression is not li
 --
 
 &lt;br&gt;&lt;br&gt;
-Our interpretation of each coefficient becomes: &lt;br&gt;
+If we add more predictos, our interpretation of each coefficient becomes: &lt;br&gt;
 + ___"The change in `\(y\)` whilst holding all others parameters constant"___
 
 &lt;br&gt;&lt;br&gt;
@@ -300,7 +368,7 @@ Our interpretation of each coefficient becomes: &lt;br&gt;
 We can add more predictors with the `+`:
 
 ```r
-lm(y ~ x1 + x2 + x3 + xn)
+lm(y ~ x1 + x2 + x3 + xi)
 ```
 
 ---
@@ -309,7 +377,7 @@ lm(y ~ x1 + x2 + x3 + xn)
 
 How do we enter categorical variables into a model?
 
-+ Models won't understand text, and numbers are numeric
++ Models won't understand text, and numbers are numeric, so we use `factor` variables?
 
 --
 
@@ -879,12 +947,13 @@ class: middle
 ---
 class: middle
 
-# Exercise 5: Predicting 10-year CHD in Framingham data
+# Exercise 5: Predicting 10-year CHD risk in Framingham data
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
+"ratio": "16:9",
 "highlightStyle": "github",
 "highlightLines": true,
 "countIncrementalSlides": false

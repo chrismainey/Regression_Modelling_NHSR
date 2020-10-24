@@ -41,26 +41,26 @@ View(framingham)
 
 
 # A good first step is to visualise the distribution of the outcome (sysBP), and the 
-# possible relationship with predictors.
+# possible relationship with predictor, BMI.
 
-
-
+# Firstly, draw a histogram, box-plot or you choice to view the distribution of sysBP.
 
 
 
 ## Is blood pressure relate to BMI?
-## Visualise it as a scatter plot:
+## Next, visualise this by building a scatter plot of sysBP and BMI:
 
 
 
 
 
 
-## Now we can build a regression model. sysBP is our outcome, and BMI our predictor.
+## Now let's build a linear regression model. sysBP is our outcome, and BMI our predictor.
 
 
 
 
+## Use the summary function to view the model
 ## Can you interpret the output?  Where are the coefficients, standard errors and p-values?
 
 
@@ -89,7 +89,8 @@ View(framingham)
 ####### Part 2: Multiple regression  ##########
 
 # We established BMI as predictive, but it only explained ~10% of variation.
-# Lets consider some more variables: currentSmoker, age, education
+# Lets consider adding some more variables: currentSmoker, age, education
+# Build models for each of the following, and look at the output
 
 # BMI + currentSmoker
 
@@ -107,9 +108,8 @@ View(framingham)
 ## How would you interpret these results?
 
 
-# How would you add education into this model and why?
-
-# BMI + age + education
+# How would you add the 'education' variable into this model and why?
+# Build a model with BMI + age + education as predictors and view the output
 
 
 ## How do you interpret education's coefficients?

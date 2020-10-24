@@ -43,6 +43,8 @@ View(framingham)
 # A good first step is to visualise the distribution of the outcome (sysBP), and the 
 # possible relationship with predictors.
 
+# Firstly, draw a histogram, box-plot or you choice to view the distribution of sysBP.
+
 library(ggplot2)
 ggplot(framingham, aes(x=sysBP))+
   geom_histogram(fill="green3", col=1, alpha=0.5)+
@@ -52,7 +54,7 @@ ggplot(framingham, aes(x=sysBP))+
 
 
 ## Is blood pressure relate to BMI?
-## Visualise it as a scatter plot:
+## Next, visualise this by building a scatter plot of sysBP and BMI:
 
 ggplot(framingham, aes(x=sysBP, y=BMI))+
   geom_point()+
@@ -62,14 +64,16 @@ ggplot(framingham, aes(x=sysBP, y=BMI))+
 
 
 
-## Now we can build a regression model. sysBP is our outcome, and BMI our predictor.
+## Now let's build a linear regression model. sysBP is our outcome, and BMI our predictor.
 
 lm1 <- lm(sysBP ~ BMI, data = framingham)
 
 summary(lm1)
 
 
+## Use the summary function to view the model
 ## Can you interpret the output?  Where are the coefficients, standard errors and p-values?
+
 # For each increase of one in BMI, Systolic blood pressure increases by 1.76 on average, 
 # starting from 86.93 
 
@@ -78,7 +82,7 @@ summary(lm1)
 
 
 ##  How much variation in sysBP does BMI explain?
-# 10.7%
+# 10.7%, based on the R2
 
 
 
@@ -103,7 +107,8 @@ summary(lm2)
 ####### Part 2: Multiple regression  ##########
 
 # We established BMI as predictive, but it only explained ~10% of variation.
-# Lets consider some more variables: currentSmoker, age, education
+# Lets consider adding some more variables: currentSmoker, age, education
+# Build a model with BMI + age + education as predictors and view the output:
 
 # BMI + currentSmoker
 lm3 <- lm(sysBP ~ BMI + currentSmoker, data = framingham)

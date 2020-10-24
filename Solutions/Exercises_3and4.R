@@ -27,9 +27,9 @@ glm1<- glm(Death ~ Age, data=LOS_model, family="binomial")
 summary(glm1)
 
 
-## Is age signficant?  How would we intepret it?
+## Is age significant?  How would we interpret it?
 
-# Yes, age is signficant. Hard to interpret on the log scale.
+# Yes, age is significant. Hard to interpret on the log scale.
 # Log-odds of death increases by 0.02 for every increase in one of age, from baseline log-odds 
 # of -2.18
 
@@ -47,7 +47,7 @@ summary(glm2)
 
 
 # Let make them more interpretable by transforming them back to odd.
-# To do this, we can exponetiate the coefficients
+# To do this, we can exponentiate the coefficients
 
 exp(coef(glm1))
 exp(coef(glm2))
@@ -83,7 +83,7 @@ lrtest(glm1, glm3)
 
 
 
-# AIC is smaller (difference is >4) suggesting a 'larger' model is signficantly better.
+# AIC is smaller (difference is >4) suggesting a 'larger' model is significantly better.
 # Likelihood ratios do the same. 
 
 
@@ -98,7 +98,7 @@ glm4 <- glm(Death ~ Age * LOS, data = LOS_model, family="binomial")
 summary(glm4)
 
 ## Is this different?  
-# Yes! This model suggests they are all signficant, with the combination of LOS and age (when increasing)
+# Yes! This model suggests they are all significant, with the combination of LOS and age (when increasing)
 # showing a negative coefficient.  i.e. both age and LOS important, but it is not as strong as a 
 # sum of both
 

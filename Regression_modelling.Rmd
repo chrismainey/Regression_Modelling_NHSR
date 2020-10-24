@@ -9,6 +9,7 @@ output:
     lib_dir: libs
     seal: false
     nature:
+      ratio: '16:9'
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -17,28 +18,35 @@ output:
 class: center
 
 
-```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
-  comment = "#>",
-  collapse = TRUE,
-  fig.align = "center"
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE, fig.height=5.2, fig.width=9}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	fig.align = "center",
+	collapse = TRUE,
+	comment = "#>",
+	fig.align="center",
+	fig.height=5,
+	fig.width=9,
+	fig.retina=2,
+	dev.args = list(type = "cairo")
 )
 library(Cairo)
 library(extrafont)
+library(xaringanExtra)
 ```
 
 
 
 <br><br><br><br>
 
-## Regression Modelling in `R`
+# Regression Modelling in `R`
 
 <br>
 
 .pull-left[
 __Chris Mainey__
 <p style="font-size:26;")>Senior Data Scientist<br>
-<b>University Hospitals Birmingham 
+<b>University Hospitals Birmingham<br>
 NHS Foundation Trust</b></p>
 <br>
 <span style="font-size:26;">[chris.mainey@uhb.nhs.uk](mailto:chris.mainey@uhb.nhs.uk)</span><br>
@@ -90,7 +98,7 @@ Two analysis techniques commonly used to investigate:
 
 + ___Correlation:___ shows direction, and strength of association
 
-+ ___Regression:___ estimate how one variable: $y$ changes when we observed changes in another: $x$ (or more than one)
++ ___Regression:___ estimate how one variable: $y$ changes when we observed changes in another: $x$ (or more than one, $x_{i}$)
 
 --
 
@@ -109,7 +117,7 @@ library(ggplot2)
 ```
 
 ## Example:
-```{r lm1, fig.retina= 2, fig.align="center", fig.height=4.6, fig.width=6}
+```{r lm1, fig.retina= 2, fig.align="center"}
 x <- rnorm(50, 10, 4)
 y <- runif(50, min = 0.5, 10) + (1.25*x)
 
@@ -127,10 +135,11 @@ a
 + Range: 
  + __-1 to 1:__ Perfect negative to Perfect positive Correlation
  + __0:__  No Correlation
+
 --
 
-<br><br>
-<img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Correlation_examples2.svg" height= 60% align="center">
+<br>
+<img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Correlation_examples2.svg" height="280" class="center">
 
 
 .footnote[
@@ -161,7 +170,7 @@ cor.test(x,y)
 
 Regression gives us more options than correlation:
 
-```{r lm3, fig.align="center", fig.height=4.8, fig.retina=2, fig.width=6, message=FALSE, warning=FALSE}
+```{r lm3, fig.align="center", fig.retina=2, message=FALSE, warning=FALSE}
 z <- lm(y~x)
 print(a<- a + geom_smooth(method="lm", col="red", linetype=2))
 ```
@@ -173,22 +182,27 @@ $$y= \alpha + \beta x + \epsilon$$
 
 ## Regression equation
 
-$$y= \alpha + \beta x + \epsilon$$
-+ $y$ - is our 'outcome variable'
+$$\large{y= \alpha + \beta_{i} x_{i} + \epsilon}$$
+<br>
+.pull-left[
++ $y$ - is our 'outcome', or 'dependent' variable
 + $\alpha$ - is the 'intercept', the point where our line crosses y-axis
 + $\beta$ - is a coefficient (weight) applied to $x$ 
-+ $x$ - is our predictor variable
++ $x$ - is our 'predictor', or 'independent' variable
++ $i$ - is our index, we can have $i$ predictor variables, each with a coefficient
 + $\epsilon$ - is the remaining ('residual') error
+]
 
 --
-<br><br>
 
-We assume:
+.pull-right[
+
+We are making some assumptions:
 + Linear relations
 + Data points are independent (not correlated)
 + Normally distributed error
-+ Homoskedastic (error doesn't vary much)
-
++ Homoskedastic (error doesn't vary across the range)
+]
 
 ---
 
@@ -200,7 +214,7 @@ We assume:
 + Sum would be zero, so we square and minimise _'sum of the squares'_
 --
 
-```{r lm2, fig.align="center", fig.height=5, fig.retina=2, fig.width=6, message=FALSE, warning=FALSE}
+```{r lm2, fig.align="center", message=FALSE, warning=FALSE, fig.height=5.5}
 a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5, arrow=arrow(length=unit(0.2,"cm")))
 ```
 
@@ -226,22 +240,46 @@ summary(z)
 
 ## Interpretation 
 
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
 We can now read this as:
 
 + ___"For each increase of 1 in $x$,  $y$ increases by 1.25, starting at 5.48."___
 
-<br><br>
-
 A common addition is to __"mean-centre and scale"__ our variables:
-+ ___"Take away the mean, and divide by standard deviation (z-score)."___
 
---
+.panelset[
 
+.panel[.panel-name[Original]
+```{r modor}
+z <- lm(y~x)
+summary(z)
+```
+]
+
+.panel[.panel-name[Scaled]
+```{r modsc}
+z <- lm(y~scale(x))
+summary(z)
+```
+
+]
+
+.panel[.panel-name[Interpretation]
 <br><br>
 This converts our interpretation:
 + The intercept becomes the average $y$ value
 + $\beta$ becomes the change in $y$ for one standard deviation increase in $x$ 
 
+<br>
+
+So...
++ Average $x$ is 18.24.69
++ Each increase of 1 standard deviation in $x$ increase $y$ by 4.7256
+]
+]
 
 ---
 
@@ -252,7 +290,7 @@ A common check is to plot residuals:
 plot(z)
 ```
 
-```{r lmplot, echo=FALSE, fig.retina=2, fig.align="center", fig.height=5.5, fig.width=8, fig.keep = 'last'}
+```{r lmplot, echo=FALSE,  fig.keep = 'last', fig.height=6}
 par(mfrow=c(2,2))
 plot(z)
 ```
@@ -272,14 +310,14 @@ Our plots in earlier slides make sense in 2 dimensions, but regression is not li
 --
 
 <br><br>
-Our interpretation of each coefficient becomes: <br>
+If we add more predictos, our interpretation of each coefficient becomes: <br>
 + ___"The change in $y$ whilst holding all others parameters constant"___
 
 <br><br>
 
 We can add more predictors with the `+`:
 ```{r formula, eval=FALSE}
-lm(y ~ x1 + x2 + x3 + xn)
+lm(y ~ x1 + x2 + x3 + xi)
 ```
 
 ---
@@ -288,7 +326,7 @@ lm(y ~ x1 + x2 + x3 + xn)
 
 How do we enter categorical variables into a model?
 
-+ Models won't understand text, and numbers are numeric
++ Models won't understand text, and numbers are numeric, so we use `factor` variables?
 
 --
 
@@ -444,5 +482,5 @@ class: middle
 ---
 class: middle
 
-# Exercise 5: Predicting 10-year CHD in Framingham data
+# Exercise 5: Predicting 10-year CHD risk in Framingham data
 
