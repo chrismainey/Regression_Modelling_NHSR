@@ -4,7 +4,6 @@ author: "Chris Mainey chris.mainey@uhb.nhs.uk"
 date: "2019/09/02 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
-    chakra: "libs/remark-latest.min.js"
     css: "libs/HED.css"
     lib_dir: libs
     seal: false
