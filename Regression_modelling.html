@@ -3,44 +3,59 @@
   <head>
     <title>Regression Modelling in R</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Chris Mainey chris.mainey@uhb.nhs.uk" />
-    <script src="libs/header-attrs-2.5/header-attrs.js"></script>
-    <link href="libs/font-awesome-5.3.1/css/fontawesome-all.min.css" rel="stylesheet" />
-    <link href="libs/panelset-0.2.4/panelset.css" rel="stylesheet" />
-    <script src="libs/panelset-0.2.4/panelset.js"></script>
-    <link rel="stylesheet" href="libs/HED.css" type="text/css" />
+    <meta name="author" content="Chris Mainey c.mainey@nhs.net" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <link rel="stylesheet" href="nhsr-theme/css/nhsr.css" type="text/css" />
+    <link rel="stylesheet" href="nhsr-theme/css/nhsr-fonts.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
 
-class: center
+class: title-slide, left, bottom
 
 
-
-
-
-
-&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+<div>
+<style type="text/css">.xaringan-extra-logo {
+width: 110px;
+height: 128px;
+z-index: 0;
+background-image: url(nhsr-theme/img/logo-nhs-blue.png);
+background-size: contain;
+background-repeat: no-repeat;
+position: absolute;
+top:1em;right:1em;
+}
+</style>
+<script>(function () {
+  let tries = 0
+  function addLogo () {
+    if (typeof slideshow === 'undefined') {
+      tries += 1
+      if (tries < 10) {
+        setTimeout(addLogo, 100)
+      }
+    } else {
+      document.querySelectorAll('.remark-slide-content:not(.title-slide):not(.inverse):not(.hide-logo)')
+        .forEach(function (slide) {
+          const logo = document.createElement('div')
+          logo.classList = 'xaringan-extra-logo'
+          logo.href = null
+          slide.appendChild(logo)
+        })
+    }
+  }
+  document.addEventListener('DOMContentLoaded', addLogo)
+})()</script>
+</div>
 
 # Regression Modelling in `R`
-
-&lt;br&gt;
-
-.pull-left[
-__Chris Mainey__
-&lt;p style="font-size:26;")&gt;Senior Data Scientist&lt;br&gt;
-&lt;b&gt;University Hospitals Birmingham&lt;br&gt;
-NHS Foundation Trust&lt;/b&gt;&lt;/p&gt;
-&lt;br&gt;
-&lt;span style="font-size:26;"&gt;[chris.mainey@uhb.nhs.uk](mailto:chris.mainey@uhb.nhs.uk)&lt;/span&gt;&lt;br&gt;
-<i class="fab  fa-twitter "></i> &lt;a href="https://twitter.com/chrismainey?s=09" style="line-height:2;"&gt;@chrismainey&lt;/a&gt;
-]
-
-.pull-right[
-&lt;img src= "./man/figures/NHSR-logo.png" width=80% height=80%&gt;
-&lt;br&gt;&lt;br&gt;
-&lt;img src= "./man/figures/HI.png" width=80% height=80%&gt;
-]
+----
+## **A bit of theory and application**
+### Chris Mainey c.mainey@nhs.net
+### 4/11/2021
 
 
 ---
@@ -93,17 +108,7 @@ Sometimes the effects of other variables interact/mask this (___"confounding"___
 
 
 ## Example:
-
-```r
-x &lt;- rnorm(50, 10, 4)
-y &lt;- runif(50, min = 0.5, 10) + (1.25*x)
-
-a&lt;-ggplot(data.frame(x,y,z), aes(x=x,y=y))+
-  geom_point(col="dodgerblue2", alpha=0.65)
-a
-```
-
-&lt;img src="Regression_modelling_files/figure-html/lm1-1.png" width="648" style="display: block; margin: auto;" /&gt;
+&lt;img src="Regression_modelling_files/figure-html/lm1-1.png" width="1800" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -118,8 +123,9 @@ a
 --
 
 &lt;br&gt;
+&lt;center&gt;
 &lt;img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Correlation_examples2.svg" height="280" class="center"&gt;
-
+&lt;/center&gt;
 
 .footnote[
 Graphic from:
@@ -133,22 +139,22 @@ By DenisBoigelot, https://commons.wikimedia.org/w/index.php?curid=15165296 [Acce
 Lets check the correlation in our generated data:
 
 
-```r
-cor(x, y)
-#&gt; [1] 0.8650106
+```
+## [1] 0.8650106
+```
 
-cor.test(x,y)
-#&gt; 
-#&gt; 	Pearson's product-moment correlation
-#&gt; 
-#&gt; data:  x and y
-#&gt; t = 11.944, df = 48, p-value = 5.53e-16
-#&gt; alternative hypothesis: true correlation is not equal to 0
-#&gt; 95 percent confidence interval:
-#&gt;  0.7727115 0.9214882
-#&gt; sample estimates:
-#&gt;       cor 
-#&gt; 0.8650106
+```
+## 
+## 	Pearson's product-moment correlation
+## 
+## data:  x and y
+## t = 11.944, df = 48, p-value = 5.53e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.7727115 0.9214882
+## sample estimates:
+##       cor 
+## 0.8650106
 ```
 
 + `cor.test` is a correlation and a t-test.
@@ -161,13 +167,7 @@ cor.test(x,y)
 
 Regression gives us more options than correlation:
 
-
-```r
-z &lt;- lm(y~x)
-print(a&lt;- a + geom_smooth(method="lm", col="red", linetype=2))
-```
-
-&lt;img src="Regression_modelling_files/figure-html/lm3-1.png" width="648" style="display: block; margin: auto;" /&gt;
+&lt;img src="Regression_modelling_files/figure-html/lm3-1.png" width="1800" style="display: block; margin: auto;" /&gt;
 
 
 `$$y= \alpha + \beta x + \epsilon$$`
@@ -208,48 +208,41 @@ We are making some assumptions:
 + Sum would be zero, so we square and minimise _'sum of the squares'_
 --
 
-
-```r
-a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5, arrow=arrow(length=unit(0.2,"cm")))
-```
-
-&lt;img src="Regression_modelling_files/figure-html/lm2-1.png" width="648" style="display: block; margin: auto;" /&gt;
+&lt;img src="Regression_modelling_files/figure-html/lm2-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
 ## Regression models (3)
 
-+ We created an `lm` object called `z`.  You can then use that object with other functions like `summary`, `predict`, `plot` etc.
++ We created an `lm` object called `z`.  Can use this object with other functions like `summary`, `predict`, `plot` etc.
 
 
 
-```r
-summary(z)
-#&gt; 
-#&gt; Call:
-#&gt; lm(formula = y ~ x)
-#&gt; 
-#&gt; Residuals:
-#&gt;     Min      1Q  Median      3Q     Max 
-#&gt; -4.9575 -2.2614  0.4444  2.4475  4.1663 
-#&gt; 
-#&gt; Coefficients:
-#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    
-#&gt; (Intercept)   5.4776     1.1386   4.811 1.53e-05 ***
-#&gt; x             1.2507     0.1047  11.944 5.53e-16 ***
-#&gt; ---
-#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#&gt; 
-#&gt; Residual standard error: 2.77 on 48 degrees of freedom
-#&gt; Multiple R-squared:  0.7482,	Adjusted R-squared:  0.743 
-#&gt; F-statistic: 142.7 on 1 and 48 DF,  p-value: 5.53e-16
+```
+## 
+## Call:
+## lm(formula = y ~ x)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.9575 -2.2614  0.4444  2.4475  4.1663 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   5.4776     1.1386   4.811 1.53e-05 ***
+## x             1.2507     0.1047  11.944 5.53e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.77 on 48 degrees of freedom
+## Multiple R-squared:  0.7482,	Adjusted R-squared:  0.743 
+## F-statistic: 142.7 on 1 and 48 DF,  p-value: 5.53e-16
 ```
 
 
 --
 
-+ We can test fit using f-tests, prediction error or the R&lt;sup&gt;2&lt;/sup&gt; .
-+ R&lt;sup&gt;2&lt;/sup&gt; is the proportion of variation in `\(y\)`, explained by `\(x\)` .
++ We can test fit using f-tests, prediction error, or the R&lt;sup&gt;2&lt;/sup&gt; (the proportion of variation in `\(y\)`, explained by `\(x\)`).
 
 
 ---
@@ -258,9 +251,7 @@ summary(z)
 
 
 
-We can now read this as:
-
-+ ___"For each increase of 1 in `\(x\)`,  `\(y\)` increases by 1.25, starting at 5.48."___
+___"For each increase of 1 in `\(x\)`,  `\(y\)` increases by 1.25, starting at 5.48."___
 
 A common addition is to __"mean-centre and scale"__ our variables:
 
@@ -268,53 +259,49 @@ A common addition is to __"mean-centre and scale"__ our variables:
 
 .panel[.panel-name[Original]
 
-```r
-z &lt;- lm(y~x)
-summary(z)
-#&gt; 
-#&gt; Call:
-#&gt; lm(formula = y ~ x)
-#&gt; 
-#&gt; Residuals:
-#&gt;     Min      1Q  Median      3Q     Max 
-#&gt; -4.9575 -2.2614  0.4444  2.4475  4.1663 
-#&gt; 
-#&gt; Coefficients:
-#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    
-#&gt; (Intercept)   5.4776     1.1386   4.811 1.53e-05 ***
-#&gt; x             1.2507     0.1047  11.944 5.53e-16 ***
-#&gt; ---
-#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#&gt; 
-#&gt; Residual standard error: 2.77 on 48 degrees of freedom
-#&gt; Multiple R-squared:  0.7482,	Adjusted R-squared:  0.743 
-#&gt; F-statistic: 142.7 on 1 and 48 DF,  p-value: 5.53e-16
+```
+## 
+## Call:
+## lm(formula = y ~ x)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.9575 -2.2614  0.4444  2.4475  4.1663 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   5.4776     1.1386   4.811 1.53e-05 ***
+## x             1.2507     0.1047  11.944 5.53e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.77 on 48 degrees of freedom
+## Multiple R-squared:  0.7482,	Adjusted R-squared:  0.743 
+## F-statistic: 142.7 on 1 and 48 DF,  p-value: 5.53e-16
 ```
 ]
 
 .panel[.panel-name[Scaled]
 
-```r
-z &lt;- lm(y~scale(x))
-summary(z)
-#&gt; 
-#&gt; Call:
-#&gt; lm(formula = y ~ scale(x))
-#&gt; 
-#&gt; Residuals:
-#&gt;     Min      1Q  Median      3Q     Max 
-#&gt; -4.9575 -2.2614  0.4444  2.4475  4.1663 
-#&gt; 
-#&gt; Coefficients:
-#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    
-#&gt; (Intercept)  18.2469     0.3917   46.59  &lt; 2e-16 ***
-#&gt; scale(x)      4.7256     0.3956   11.94 5.53e-16 ***
-#&gt; ---
-#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#&gt; 
-#&gt; Residual standard error: 2.77 on 48 degrees of freedom
-#&gt; Multiple R-squared:  0.7482,	Adjusted R-squared:  0.743 
-#&gt; F-statistic: 142.7 on 1 and 48 DF,  p-value: 5.53e-16
+```
+## 
+## Call:
+## lm(formula = y ~ scale(x))
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.9575 -2.2614  0.4444  2.4475  4.1663 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  18.2469     0.3917   46.59  &lt; 2e-16 ***
+## scale(x)      4.7256     0.3956   11.94 5.53e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.77 on 48 degrees of freedom
+## Multiple R-squared:  0.7482,	Adjusted R-squared:  0.743 
+## F-statistic: 142.7 on 1 and 48 DF,  p-value: 5.53e-16
 ```
 
 ]
@@ -339,11 +326,8 @@ So...
 
 A common check is to plot residuals:
 
-```r
-plot(z)
-```
 
-&lt;img src="Regression_modelling_files/figure-html/lmplot-1.png" width="648" style="display: block; margin: auto;" /&gt;
+![](Regression_modelling_files/figure-html/lmplot-1.png)&lt;!-- --&gt;
 
 
 ---
@@ -360,16 +344,13 @@ Our plots in earlier slides make sense in 2 dimensions, but regression is not li
 --
 
 &lt;br&gt;&lt;br&gt;
-If we add more predictos, our interpretation of each coefficient becomes: &lt;br&gt;
+If we add more predictors, our interpretation of each coefficient becomes: &lt;br&gt;
 + ___"The change in `\(y\)` whilst holding all others parameters constant"___
 
 &lt;br&gt;&lt;br&gt;
 
 We can add more predictors with the `+`:
 
-```r
-lm(y ~ x1 + x2 + x3 + xi)
-```
 
 ---
 
@@ -386,21 +367,19 @@ How do we enter categorical variables into a model?
 + _'pivotted' to binary columns_
 + Contain a reference level: with categories: "A", "B" &amp; "C", we get:
 
-```r
-a&lt;- data.frame(Category = factor(c("A", "B", "C", "C", "A", "B")))
-model.matrix(~., a)
-#&gt;   (Intercept) CategoryB CategoryC
-#&gt; 1           1         0         0
-#&gt; 2           1         1         0
-#&gt; 3           1         0         1
-#&gt; 4           1         0         1
-#&gt; 5           1         0         0
-#&gt; 6           1         1         0
-#&gt; attr(,"assign")
-#&gt; [1] 0 1 1
-#&gt; attr(,"contrasts")
-#&gt; attr(,"contrasts")$Category
-#&gt; [1] "contr.treatment"
+```
+##   (Intercept) CategoryB CategoryC
+## 1           1         0         0
+## 2           1         1         0
+## 3           1         0         1
+## 4           1         0         1
+## 5           1         0         0
+## 6           1         1         0
+## attr(,"assign")
+## [1] 0 1 1
+## attr(,"contrasts")
+## attr(,"contrasts")$Category
+## [1] "contr.treatment"
 ```
 
 ---
@@ -442,16 +421,6 @@ Where `\(\mu\)` is the expectation of Y, and `\(g\)` is the link function
 
 - `family` argument was set to `binomial` for binary outcomes.
 
-
-```r
-library(COUNT)
-data(medpar)
-
-glm_binomial &lt;- glm(died ~ factor(age80) + los + factor(type), data=medpar, family="binomial")
-
-sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
-```
-
 &lt;table style="border-collapse:collapse; border:none;"&gt;
 &lt;tr&gt;
 &lt;th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; "&gt;&amp;nbsp;&lt;/th&gt;
@@ -468,17 +437,17 @@ sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE,
 &lt;tr&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;(Intercept)&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.55&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.10&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.05&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.46&amp;nbsp;&amp;ndash;&amp;nbsp;0.67&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(age80)1&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.93&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.13&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.25&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.50&amp;nbsp;&amp;ndash;&amp;nbsp;2.48&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -486,13 +455,13 @@ sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE,
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.96&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.01&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.95&amp;nbsp;&amp;ndash;&amp;nbsp;0.98&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)2&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.52&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.14&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.22&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.14&amp;nbsp;&amp;ndash;&amp;nbsp;2.02&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.004&lt;/strong&gt;&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
@@ -500,9 +469,9 @@ sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE,
 &lt;tr&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)3&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;2.61&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.23&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.60&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.66&amp;nbsp;&amp;ndash;&amp;nbsp;4.12&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -512,10 +481,8 @@ sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE,
 
 &lt;/table&gt;
 
-```r
-
-ModelMetrics::auc(glm_binomial)
-#&gt; [1] 0.6372224
+```
+## [1] 0.6372224
 ```
 
 ---
@@ -527,13 +494,6 @@ ModelMetrics::auc(glm_binomial)
 
 - Can add these with `*` or `:` (check help for which to use)
 --
-
-
-```r
-glm_binomial2 &lt;- glm(died ~ factor(age80) * los + factor(type), data=medpar, family="binomial")
-
-sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
-```
 
 &lt;table style="border-collapse:collapse; border:none;"&gt;
 &lt;tr&gt;
@@ -551,15 +511,15 @@ sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE
 &lt;tr&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;(Intercept)&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.57&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.10&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.06&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.47&amp;nbsp;&amp;ndash;&amp;nbsp;0.70&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(age80)1&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.69&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.21&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.35&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.13&amp;nbsp;&amp;ndash;&amp;nbsp;2.56&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.011&lt;/strong&gt;&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
@@ -569,13 +529,13 @@ sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.96&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.01&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.94&amp;nbsp;&amp;ndash;&amp;nbsp;0.98&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)2&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.52&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.14&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.22&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.14&amp;nbsp;&amp;ndash;&amp;nbsp;2.01&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.004&lt;/strong&gt;&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
@@ -583,9 +543,9 @@ sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE
 &lt;tr&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)3&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;2.62&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.23&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.61&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.67&amp;nbsp;&amp;ndash;&amp;nbsp;4.14&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
 &lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -603,9 +563,8 @@ sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE
 
 &lt;/table&gt;
 
-```r
-ModelMetrics::auc(glm_binomial2)
-#&gt; [1] 0.6376572
+```
+## [1] 0.6376572
 ```
 
 ---
@@ -619,15 +578,14 @@ ModelMetrics::auc(glm_binomial2)
 + giving Incident Rate Ratios for `poisson`, or Odds Ratios for `binomial`
 
 
-```r
-cbind(Link=coef(glm_binomial2), Response=exp(coef(glm_binomial2)))
-#&gt;                           Link  Response
-#&gt; (Intercept)        -0.56160376 0.5702937
-#&gt; factor(age80)1      0.52537865 1.6910991
-#&gt; los                -0.04073769 0.9600809
-#&gt; factor(type)2       0.41743940 1.5180694
-#&gt; factor(type)3       0.96477095 2.6241865
-#&gt; factor(age80)1:los  0.01450661 1.0146123
+```
+##                           Link  Response
+## (Intercept)        -0.56160376 0.5702937
+## factor(age80)1      0.52537865 1.6910991
+## los                -0.04073769 0.9600809
+## factor(type)2       0.41743940 1.5180694
+## factor(type)3       0.96477095 2.6241865
+## factor(age80)1:los  0.01450661 1.0146123
 ```
 
 ---
@@ -641,14 +599,6 @@ class: middle
 
 - We can then use our model to predict our expected `\(Y\)`:
 - Need to decide what scale to predict on: `link` or `response`
-
-
-```r
-library(dplyr)
-medpar$preds &lt;- predict(glm_binomial2, type="response")
-
-top_n(medpar,5) %&gt;% knitr::kable(format = "html")
-```
 
 &lt;table&gt;
  &lt;thead&gt;
@@ -748,9 +698,8 @@ top_n(medpar,5) %&gt;% knitr::kable(format = "html")
 - Lets see the 10 cases with the highest predicted risk of death:
 
 
-```r
-medpar %&gt;% arrange(desc(preds)) %&gt;% top_n(10) %&gt;% knitr::kable(format = "html")
-#&gt; Selecting by preds
+```
+## Selecting by preds
 ```
 
 &lt;table&gt;
@@ -949,6 +898,13 @@ class: middle
 
 # Exercise 5: Predicting 10-year CHD risk in Framingham data
 
+&lt;style type="text/css"&gt;
+@media print {
+  .has-continuation {
+    display: block;
+  }
+}
+&lt;/style&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -956,6 +912,7 @@ class: middle
 "ratio": "16:9",
 "highlightStyle": "github",
 "highlightLines": true,
+"highlightLanguage": "r",
 "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {

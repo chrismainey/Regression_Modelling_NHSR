@@ -1,62 +1,59 @@
 ---
-title: "Regression Modelling in R"
-author: "Chris Mainey chris.mainey@uhb.nhs.uk"
-date: "2019/09/02 (updated: `r Sys.Date()`)"
+title: "Regression Modelling in `R`"
+subtitle: "A bit of theory and application"
+institute: "NHS England & NHS Improvement"
+date: "4/11/2021"
+author: "Chris Mainey c.mainey@nhs.net"
 output:
   xaringan::moon_reader:
-    css: "libs/HED.css"
+    css: 
+      - default
+      - nhsr-theme/css/nhsr.css
+      - nhsr-theme/css/nhsr-fonts.css
     lib_dir: libs
     seal: false
+    self-contained: true
     nature:
       ratio: '16:9'
       highlightStyle: github
       highlightLines: true
+      highlightLanguage: ["r"]
       countIncrementalSlides: false
 
 ---
-class: center
-
-
-```{r setup, echo=FALSE, message=FALSE, warning=FALSE, fig.height=5.2, fig.width=9}
-knitr::opts_chunk$set(
-	echo = TRUE,
-	fig.align = "center",
-	collapse = TRUE,
-	comment = "#>",
-	fig.align="center",
-	fig.height=5,
-	fig.width=9,
-	fig.retina=2,
-	dev.args = list(type = "cairo")
-)
+class: title-slide, left, bottom
+```{r setup, include = FALSE}
 library(Cairo)
-library(extrafont)
+library(knitr)
+library(tidyverse)
+library(nhsrtheme)
 library(xaringanExtra)
+# set default options
+opts_chunk$set(echo = FALSE,
+               fig.width = 6,
+               fig.height = 3.5,
+               dpi = 300,
+               dev.args = list(type = "cairo"))
+
+# uncomment the following lines if you want to use the NHS-R theme colours by default
+scale_fill_continuous <- partial(scale_fill_nhs, discrete = FALSE)
+scale_fill_discrete <- partial(scale_fill_nhs, discrete = TRUE)
+scale_colour_continuous <- partial(scale_colour_nhs, discrete = FALSE)
+scale_colour_discrete <- partial(scale_colour_nhs, discrete = TRUE)
 ```
 
+```{r echo=FALSE}
+xaringanExtra::use_logo(
+  image_url = "nhsr-theme/img/logo-nhs-blue.png",
+  exclude_class = c("title-slide", "inverse", "hide-logo")
+)
+```
 
-
-<br><br><br><br>
-
-# Regression Modelling in `R`
-
-<br>
-
-.pull-left[
-__Chris Mainey__
-<p style="font-size:26;")>Senior Data Scientist<br>
-<b>University Hospitals Birmingham<br>
-NHS Foundation Trust</b></p>
-<br>
-<span style="font-size:26;">[chris.mainey@uhb.nhs.uk](mailto:chris.mainey@uhb.nhs.uk)</span><br>
-`r icon::fa("twitter")` <a href="https://twitter.com/chrismainey?s=09" style="line-height:2;">@chrismainey</a>
-]
-
-.pull-right[
-<img src= "./man/figures/NHSR-logo.png" width=80% height=80%>
-<br><br>
-<img src= "./man/figures/HI.png" width=80% height=80%>
-]
+# `r rmarkdown::metadata$title`
+----
+## **`r rmarkdown::metadata$subtitle`**
+### `r rmarkdown::metadata$author`
+### `r rmarkdown::metadata$date`
 
 
 ---
@@ -138,8 +135,9 @@ a
 --
 
 <br>
+<center>
 <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Correlation_examples2.svg" height="280" class="center">
-
+</center>
 
 .footnote[
 Graphic from:
@@ -213,7 +211,7 @@ We are making some assumptions:
 + Sum would be zero, so we square and minimise _'sum of the squares'_
 --
 
-```{r lm2, fig.align="center", message=FALSE, warning=FALSE, fig.height=5.5}
+```{r lm2, fig.align="center", fig.height=3, fig.width=6, message=FALSE, warning=FALSE}
 a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5, arrow=arrow(length=unit(0.2,"cm")))
 ```
 
@@ -221,7 +219,7 @@ a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5, arrow=arrow(length=unit(0.
 
 ## Regression models (3)
 
-+ We created an `lm` object called `z`.  You can then use that object with other functions like `summary`, `predict`, `plot` etc.
++ We created an `lm` object called `z`.  Can use this object with other functions like `summary`, `predict`, `plot` etc.
 
 
 ```{r sum_reg}
@@ -231,8 +229,7 @@ summary(z)
 
 --
 
-+ We can test fit using f-tests, prediction error or the R<sup>2</sup> .
-+ R<sup>2</sup> is the proportion of variation in $y$, explained by $x$ .
++ We can test fit using f-tests, prediction error, or the R<sup>2</sup> (the proportion of variation in $y$, explained by $x$).
 
 
 ---
@@ -243,9 +240,7 @@ summary(z)
 xaringanExtra::use_panelset()
 ```
 
-We can now read this as:
-
-+ ___"For each increase of 1 in $x$,  $y$ increases by 1.25, starting at 5.48."___
+___"For each increase of 1 in $x$,  $y$ increases by 1.25, starting at 5.48."___
 
 A common addition is to __"mean-centre and scale"__ our variables:
 
@@ -289,7 +284,7 @@ A common check is to plot residuals:
 plot(z)
 ```
 
-```{r lmplot, echo=FALSE,  fig.keep = 'last', fig.height=6}
+```{r lmplot, echo=FALSE,  fig.keep = 'last'}
 par(mfrow=c(2,2))
 plot(z)
 ```
@@ -309,7 +304,7 @@ Our plots in earlier slides make sense in 2 dimensions, but regression is not li
 --
 
 <br><br>
-If we add more predictos, our interpretation of each coefficient becomes: <br>
+If we add more predictors, our interpretation of each coefficient becomes: <br>
 + ___"The change in $y$ whilst holding all others parameters constant"___
 
 <br><br>
@@ -483,3 +478,10 @@ class: middle
 
 # Exercise 5: Predicting 10-year CHD risk in Framingham data
 
+```{css, echo=FALSE}
+@media print {
+  .has-continuation {
+    display: block;
+  }
+}
+```
