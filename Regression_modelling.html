@@ -3,7 +3,7 @@
   <head>
     <title>Regression Modelling in R</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Chris Mainey c.mainey@nhs.net" />
+    <meta name="author" content="Chris Mainey - c.mainey@nhs.net" />
     <script src="libs/header-attrs-2.11/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -54,8 +54,9 @@ top:1em;right:1em;
 # Regression Modelling in `R`
 ----
 ## **A bit of theory and application**
-### Chris Mainey c.mainey@nhs.net
-### 4/11/2021
+### Chris Mainey - c.mainey@nhs.net 
+### &lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#005EB8;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"&gt;&lt;/path&gt;&lt;/svg&gt;@chrismainey
+#### 4/11/2021
 
 
 ---
@@ -96,7 +97,9 @@ Two analysis techniques commonly used to investigate:
 
 + ___Correlation:___ shows direction, and strength of association
 
-+ ___Regression:___ estimate how one variable: `\(y\)` changes when we observed changes in another: `\(x\)` (or more than one, `\(x_{i}\)`)
++ ___Regression:___ estimate how one (or more) variable(s) change in relation to each other. Usually:
+  + `\(y\)` (the variable we're interested in) is the "dependent variable" or "outcome"
+  + `\(x\)` (or more than one, `\(x_{i}\)`) as the "independent variables" or "predictors"
 
 --
 
@@ -108,7 +111,7 @@ Sometimes the effects of other variables interact/mask this (___"confounding"___
 
 
 ## Example:
-&lt;img src="Regression_modelling_files/figure-html/lm1-1.png" width="1800" style="display: block; margin: auto;" /&gt;
+&lt;img src="Regression_modelling_files/figure-html/lm1-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -139,8 +142,16 @@ By DenisBoigelot, https://commons.wikimedia.org/w/index.php?curid=15165296 [Acce
 Lets check the correlation in our generated data:
 
 
+```r
+cor(x, y)
+```
+
 ```
 ## [1] 0.8650106
+```
+
+```r
+cor.test(x,y)
 ```
 
 ```
@@ -171,6 +182,14 @@ Regression gives us more options than correlation:
 
 
 `$$y= \alpha + \beta x + \epsilon$$`
+
+---
+
+
+### Regression models (2)
+Zooming in...
+
+&lt;img src="Regression_modelling_files/figure-html/lm35-1.png" width="1800" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -205,7 +224,7 @@ We are making some assumptions:
 + 'Residual' distance between prediction and data point ( `\(\epsilon\)` ).
 --
 
-+ Sum would be zero, so we square and minimise _'sum of the squares'_
++ Sum would be zero, so we 'square' (^2) it, and minimise the _'sum of the squares'_
 --
 
 &lt;img src="Regression_modelling_files/figure-html/lm2-1.png" style="display: block; margin: auto;" /&gt;
@@ -214,8 +233,23 @@ We are making some assumptions:
 
 ## Regression models (3)
 
-+ We created an `lm` object called `z`.  Can use this object with other functions like `summary`, `predict`, `plot` etc.
+So now let's create a linear regression model.  I prefer to create them as objects so I can use them again later.  Let's call this one _model1_.  That's fairly bad naming, but oh well....
+&lt;br&gt;&lt;br&gt;
+Let's we have a data.frame called _mydata_ and columns called _Y_ (that we are predicting) using a column called _X_
 
+
+```r
+model1 &lt;- lm(Y ~ X, data = mydata)
+```
+&lt;br&gt;&lt;br&gt;
+We can then use other methods on this object, like `print()`, `summary()`, `plot()` and `predict()`.
+
+&lt;br&gt;&lt;br&gt;
+
+The next two slides show the output of the summary function and plot.
+---
+
+## `lm` summary
 
 
 ```
@@ -247,13 +281,30 @@ We are making some assumptions:
 
 ---
 
-## Interpretation 
+## Interpretation (1)
 
+So how do we interpret the output?  
 
++ The intercept `\((\alpha)\)` = 5.48
++ The coefficient `\((\beta)\)` for `\(x\)` = 1.25
 
 ___"For each increase of 1 in `\(x\)`,  `\(y\)` increases by 1.25, starting at 5.48."___
 
-A common addition is to __"mean-centre and scale"__ our variables:
+--
+
+&lt;br&gt;&lt;br&gt; 
+
+A common addition is to __"mean-centre and scale"__ our variables. So `\(x\)` becomes:
+
+$$ \frac{(x - \bar{x})}{\sigma_x} $$
+
+```r
+model1_scaled &lt;- lm(Y ~ scale(X), data = mydata)
+```
+---
+## Interpretation (2)
+
+
 
 .panelset[
 
@@ -322,13 +373,15 @@ So...
 
 ---
 
-## Regression diagnostics (5)
+## Regression diagnostics (1)
 
 A common check is to plot residuals:
+![](Regression_modelling_files/figure-html/rplotsetup-1.png)&lt;!-- --&gt;
 
+## Regression diagnostics (2)
 
-![](Regression_modelling_files/figure-html/lmplot-1.png)&lt;!-- --&gt;
-
+A common check is to plot residuals:
+![](Regression_modelling_files/figure-html/rplotsetup2-1.png)&lt;!-- --&gt;
 
 ---
 class: center, middle
@@ -351,6 +404,9 @@ If we add more predictors, our interpretation of each coefficient becomes: &lt;b
 
 We can add more predictors with the `+`:
 
+```r
+lm(y ~ x1 + x2 + x3 + xi)
+```
 
 ---
 
@@ -388,12 +444,18 @@ class: middle
 ## Exercise 2:  Linear regression with multiple predictors
 
 ---
+class: middle center
+
+![XKCD commic saying linear regression can be rubbish](https://imgs.xkcd.com/comics/linear_regression.png)
+https://xkcd.com/1725/
+
+---
 
 ## What about non-linear data?
 
 - Data are not necessarily linear. Death is binary, LOS is a count etc.
 
-- We can use the Generalized Linear Model (GLM):
+- We can use the __Generalized Linear Model (GLM)__:
 
 `$$\large{g(\mu)= \alpha + \beta x}$$`
 &lt;br&gt;
@@ -401,15 +463,21 @@ Where `\(\mu\)` is the expectation of Y, and `\(g\)` is the link function
 
 --
 
++ We assume a distribution from the [Exponential family](https://en.wikipedia.org/wiki/Exponential_family):
+  + Binomial for binary, TRUE/FALSE, PASS/FAIL
+  + Poisson for counts
+
+--
+
 + The link function transforms the data before fitting a model
 
 --
 
-+ Can't use OLS for this, so we use 'maximum-likelihood'
++ Can't use OLS for this, so we use 'maximum-likelihood' estimation, which is not exact.
 
 --
 
-+ Many of the methods for `lm` are common to `glm`, but we can't use R&lt;sup&gt;2&lt;/sup&gt;
++ Many of the methods, and `R` function, for `lm` are common to `glm`, but we can't use R&lt;sup&gt;2&lt;/sup&gt;
 
 --
 
@@ -419,7 +487,15 @@ Where `\(\mu\)` is the expectation of Y, and `\(g\)` is the link function
 
 ## Generalized Linear Models
 
-- `family` argument was set to `binomial` for binary outcomes.
+
+```r
+library(COUNT)
+data(medpar)
+
+glm_binomial &lt;- glm(died ~ factor(age80) + los + factor(type), data=medpar, family="binomial")
+
+sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
+```
 
 &lt;table style="border-collapse:collapse; border:none;"&gt;
 &lt;tr&gt;
@@ -481,7 +557,8 @@ Where `\(\mu\)` is the expectation of Y, and `\(g\)` is the link function
 
 &lt;/table&gt;
 
-```
+```r
+ModelMetrics::auc(glm_binomial)
 ## [1] 0.6372224
 ```
 
@@ -489,11 +566,15 @@ Where `\(\mu\)` is the expectation of Y, and `\(g\)` is the link function
 
 ## Interactions
 
-- 'Interactions' are where predictor variables affect each other.
+- 'Interactions' are where predictor variables affect each other. Can add using `*` or `:` (check help for which to use)
 --
 
-- Can add these with `*` or `:` (check help for which to use)
---
+
+```r
+glm_binomial2 &lt;- glm(died ~ factor(age80) * los + factor(type), data=medpar, family="binomial")
+
+sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
+```
 
 &lt;table style="border-collapse:collapse; border:none;"&gt;
 &lt;tr&gt;
@@ -563,6 +644,10 @@ Where `\(\mu\)` is the expectation of Y, and `\(g\)` is the link function
 
 &lt;/table&gt;
 
+```r
+ModelMetrics::auc(glm_binomial2)
+```
+
 ```
 ## [1] 0.6376572
 ```
@@ -572,10 +657,10 @@ Where `\(\mu\)` is the expectation of Y, and `\(g\)` is the link function
 # Interpretation
 
 + Our model coefficients in `lm` were straight-forward multipliers
-+ `glm` is similar, but it is on the scale of the link-function.
++ `glm` is similar, but it is on the scale of the ___link-function___.
  + log scale for `poisson` models, or logit (log odds) scale for `binomial`
-+ Common to transform output back to response scale
-+ giving Incident Rate Ratios for `poisson`, or Odds Ratios for `binomial`
++ It is common to transform outputs back to the original ('response') scale.
++ This gives Incident Rate Ratios for `poisson`, or Odds Ratios for `binomial`.
 
 
 ```
@@ -588,7 +673,9 @@ Where `\(\mu\)` is the expectation of Y, and `\(g\)` is the link function
 ## factor(age80)1:los  0.01450661 1.0146123
 ```
 
+
 ---
+
 class: middle
 
 ## Exercise 3: Generalized Linear Model (GLM)
@@ -897,6 +984,13 @@ class: middle
 class: middle
 
 # Exercise 5: Predicting 10-year CHD risk in Framingham data
+
+---
+class: middle center
+
+![](https://imgs.xkcd.com/comics/correlation.png)
+
+https://xkcd.com/552/
 
 &lt;style type="text/css"&gt;
 @media print {

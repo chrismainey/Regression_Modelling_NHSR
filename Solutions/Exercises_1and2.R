@@ -65,14 +65,15 @@ ggplot(framingham, aes(x=sysBP, y=BMI))+
 
 
 ## Now let's build a linear regression model. sysBP is our outcome, and BMI our predictor.
+## create an object with a name, using the `lm` function.
 
 lm1 <- lm(sysBP ~ BMI, data = framingham)
-
-summary(lm1)
 
 
 ## Use the summary function to view the model
 ## Can you interpret the output?  Where are the coefficients, standard errors and p-values?
+
+summary(lm1)
 
 # For each increase of one in BMI, Systolic blood pressure increases by 1.76 on average, 
 # starting from 86.93 

@@ -4,11 +4,11 @@
 ## Here we will build a GLM to predict death using the LOS_models dataset from the NHSRdatasets package.
 
 #Load package, install if you don't have it.
-#install.packages("COUNT")
+#install.packages("NHSRdatasets")
 library(NHSRdatasets)
 
 
-#load the dataset 'medpar' using the 'data' function
+#load the dataset 'LOS_model' using the 'data' function
 data(LOS_model)
 
 # Inspect the data. You can use View, summary or other functions.
@@ -46,8 +46,9 @@ summary(glm2)
 # increase in age
 
 
-# Let make them more interpretable by transforming them back to odd.
-# To do this, we can exponentiate the coefficients
+# Let make them more interpretable by transforming them back to odds scale.
+# To do this, we "reverse" the link function.  
+# We used a log link, so the inverse is to 'exponentiate' the coefficients
 
 exp(coef(glm1))
 exp(coef(glm2))
@@ -121,7 +122,7 @@ ModelMetrics::auc(glm4)
 framingham$preds <- predict(lm6, newdata=framingham)
 
 
-# We can compare them to the original data.  Lets do this in a plot:
+# We can compare them to the original data.  Lets do this with a scatter plot:
 library(ggplot2)
 ggplot(framingham, aes(y=sysBP, x=preds))+
   geom_point()+
@@ -148,7 +149,7 @@ ggplot(LOS_model, aes(y=Death, x=preds))+
 
 
 ## How else could we visualise it?
-## Need to reflect 'Death' in groups: box plot, violin, plot, overlayed histograms or denisties etc.
+## Need to reflect 'Death' in groups: box plot, violin, plot, overlayed histograms or densities etc.
 
 # Boxplot
 ggplot(LOS_model, aes(x=factor(Death), group=Death, y=preds))+

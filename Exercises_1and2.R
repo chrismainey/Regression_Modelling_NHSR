@@ -56,6 +56,7 @@ View(framingham)
 
 
 ## Now let's build a linear regression model. sysBP is our outcome, and BMI our predictor.
+## create an object with a name, using the `lm` function.
 
 
 

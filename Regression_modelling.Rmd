@@ -3,7 +3,7 @@ title: "Regression Modelling in `R`"
 subtitle: "A bit of theory and application"
 institute: "NHS England & NHS Improvement"
 date: "4/11/2021"
-author: "Chris Mainey c.mainey@nhs.net"
+author: "Chris Mainey - c.mainey@nhs.net"
 output:
   xaringan::moon_reader:
     css: 
@@ -23,23 +23,50 @@ output:
 ---
 class: title-slide, left, bottom
 ```{r setup, include = FALSE}
-library(Cairo)
+library(ragg)
+ragg_png = function(..., res = 192) {
+  ragg::agg_png(..., res = res, units = "in")
+}
+knitr::opts_chunk$set(dev = "ragg_png", fig.ext = "png")
 library(knitr)
 library(tidyverse)
 library(nhsrtheme)
 library(xaringanExtra)
+library(ggforce)
 # set default options
 opts_chunk$set(echo = FALSE,
                fig.width = 6,
-               fig.height = 3.5,
+               fig.height = 3.3,
                dpi = 300,
-               dev.args = list(type = "cairo"))
+               dev = "png", 
+               dev.args = list(type = "cairo-png"))
 
 # uncomment the following lines if you want to use the NHS-R theme colours by default
 scale_fill_continuous <- partial(scale_fill_nhs, discrete = FALSE)
 scale_fill_discrete <- partial(scale_fill_nhs, discrete = TRUE)
 scale_colour_continuous <- partial(scale_colour_nhs, discrete = FALSE)
 scale_colour_discrete <- partial(scale_colour_nhs, discrete = TRUE)
+
+theme_set(
+theme_bw() +
+    theme(legend.position = "right",
+          plot.subtitle = element_text(face = "italic"
+                                       , family = "sans"
+                                       , size=10))
+)
+
+alpha <- 5.4776
+X<-c(1,2,2)
+Y<-alpha + (X * 1.2507)
+Y[2] <- Y[1]
+dt2  <- data.frame(X,Y)
+
+triangle<- data.frame(X=c(1.5,2.13,0),
+Y = c(6.3, 7.3, 6.2), 
+#value=c("1", "1.5", "2"),
+label= c("1", "\u03B2", "\u03B1" ))
+
+
 ```
 
 ```{r echo=FALSE}
@@ -52,8 +79,9 @@ xaringanExtra::use_logo(
 # `r rmarkdown::metadata$title`
 ----
 ## **`r rmarkdown::metadata$subtitle`**
-### `r rmarkdown::metadata$author`
-### `r rmarkdown::metadata$date`
+### `r rmarkdown::metadata$author` 
+### `r icons::icon_style(icons::fontawesome("twitter"), fill = "#005EB8")`@chrismainey
+#### `r rmarkdown::metadata$date`
 
 
 ---
@@ -94,7 +122,9 @@ Two analysis techniques commonly used to investigate:
 
 + ___Correlation:___ shows direction, and strength of association
 
-+ ___Regression:___ estimate how one variable: $y$ changes when we observed changes in another: $x$ (or more than one, $x_{i}$)
++ ___Regression:___ estimate how one (or more) variable(s) change in relation to each other. Usually:
+  + $y$ (the variable we're interested in) is the "dependent variable" or "outcome"
+  + $x$ (or more than one, $x_{i}$) as the "independent variables" or "predictors"
 
 --
 
@@ -113,7 +143,7 @@ library(ggplot2)
 ```
 
 ## Example:
-```{r lm1, fig.retina= 2, fig.align="center"}
+```{r lm1, fig.align="center"}
 x <- rnorm(50, 10, 4)
 y <- runif(50, min = 0.5, 10) + (1.25*x)
 
@@ -150,7 +180,7 @@ By DenisBoigelot, https://commons.wikimedia.org/w/index.php?curid=15165296 [Acce
 
 Lets check the correlation in our generated data:
 
-```{r correlation}
+```{r correlation, echo = TRUE}
 cor(x, y)
 
 cor.test(x,y)
@@ -169,11 +199,28 @@ Regression gives us more options than correlation:
 
 ```{r lm3, fig.align="center", fig.retina=2, message=FALSE, warning=FALSE}
 z <- lm(y~x)
-print(a<- a + geom_smooth(method="lm", col="red", linetype=2))
+print(a<- a + geom_smooth(method="lm", col="red", linetype=2,fullrange=TRUE, se=FALSE))
 ```
 
 
 $$y= \alpha + \beta x + \epsilon$$
+
+---
+
+
+### Regression models (2)
+Zooming in...
+
+```{r lm35, fig.align="center", fig.retina=2, message=FALSE, warning=FALSE}
+z <- lm(y~x)
+print(a + geom_mark_circle(aes(y=5.4776 , x=0), col = "darkgoldenrod2", linetype="dashed",
+             size=1.2)+
+        geom_polygon(aes(x=X,y=Y), fill=NA, col = "darkgoldenrod2", linetype="dashed",
+             size=1.2 ,data=dt2) +
+        geom_label(aes(x=X, y = Y, label=label), data=triangle)+
+        coord_cartesian(xlim = c(0,3),ylim= c(5,10))
+        )
+```
 
 ---
 
@@ -208,19 +255,33 @@ We are making some assumptions:
 + 'Residual' distance between prediction and data point ( $\epsilon$ ).
 --
 
-+ Sum would be zero, so we square and minimise _'sum of the squares'_
++ Sum would be zero, so we 'square' (^2) it, and minimise the _'sum of the squares'_
 --
 
-```{r lm2, fig.align="center", fig.height=3, fig.width=6, message=FALSE, warning=FALSE}
-a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.5, arrow=arrow(length=unit(0.2,"cm")))
+```{r lm2, fig.align="center", message=FALSE, warning=FALSE}
+a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.4, arrow=arrow(length=unit(0.15,"cm")))
 ```
 
 ---
 
 ## Regression models (3)
 
-+ We created an `lm` object called `z`.  Can use this object with other functions like `summary`, `predict`, `plot` etc.
+So now let's create a linear regression model.  I prefer to create them as objects so I can use them again later.  Let's call this one _model1_.  That's fairly bad naming, but oh well....
+<br><br>
+Let's we have a data.frame called _mydata_ and columns called _Y_ (that we are predicting) using a column called _X_
 
+```{r lm2a, eval=FALSE, echo=TRUE}
+model1 <- lm(Y ~ X, data = mydata)
+```
+<br><br>
+We can then use other methods on this object, like `print()`, `summary()`, `plot()` and `predict()`.
+
+<br><br>
+
+The next two slides show the output of the summary function and plot.
+---
+
+## `lm` summary
 
 ```{r sum_reg}
 summary(z)
@@ -234,15 +295,31 @@ summary(z)
 
 ---
 
-## Interpretation 
+## Interpretation (1)
+
+So how do we interpret the output?  
+
++ The intercept $(\alpha)$ = 5.48
++ The coefficient $(\beta)$ for $x$ = 1.25
+
+___"For each increase of 1 in $x$,  $y$ increases by 1.25, starting at 5.48."___
+
+--
+
+<br><br> 
+
+A common addition is to __"mean-centre and scale"__ our variables. So $x$ becomes:
+
+$$ \frac{(x - \bar{x})}{\sigma_x} $$
+```{r lm2b, eval = FALSE, echo=TRUE}
+model1_scaled <- lm(Y ~ scale(X), data = mydata)
+```
+---
+## Interpretation (2)
 
 ```{r xaringan-panelset, echo=FALSE}
 xaringanExtra::use_panelset()
 ```
-
-___"For each increase of 1 in $x$,  $y$ increases by 1.25, starting at 5.48."___
-
-A common addition is to __"mean-centre and scale"__ our variables:
 
 .panelset[
 
@@ -277,18 +354,21 @@ So...
 
 ---
 
-## Regression diagnostics (5)
+## Regression diagnostics (1)
 
 A common check is to plot residuals:
-```{r rplotsetup, eval=FALSE}
-plot(z)
+```{r rplotsetup, eval=TRUE}
+par(mfrow=c(1,2))
+plot(z, which = c(1:2))
 ```
 
-```{r lmplot, echo=FALSE,  fig.keep = 'last'}
-par(mfrow=c(2,2))
-plot(z)
-```
+## Regression diagnostics (2)
 
+A common check is to plot residuals:
+```{r rplotsetup2, eval=TRUE}
+par(mfrow=c(1,2))
+plot(z, which = c(3:4))
+```
 
 ---
 class: center, middle
@@ -310,7 +390,7 @@ If we add more predictors, our interpretation of each coefficient becomes: <br>
 <br><br>
 
 We can add more predictors with the `+`:
-```{r formula, eval=FALSE}
+```{r formula, eval=FALSE, echo=TRUE}
 lm(y ~ x1 + x2 + x3 + xi)
 ```
 
@@ -339,12 +419,18 @@ class: middle
 ## Exercise 2:  Linear regression with multiple predictors
 
 ---
+class: middle center
+
+![XKCD commic saying linear regression can be rubbish](https://imgs.xkcd.com/comics/linear_regression.png)
+https://xkcd.com/1725/
+
+---
 
 ## What about non-linear data?
 
 - Data are not necessarily linear. Death is binary, LOS is a count etc.
 
-- We can use the Generalized Linear Model (GLM):
+- We can use the __Generalized Linear Model (GLM)__:
 
 $$\large{g(\mu)= \alpha + \beta x}$$
 <br>
@@ -352,15 +438,21 @@ Where $\mu$ is the expectation of Y, and $g$ is the link function
 
 --
 
++ We assume a distribution from the [Exponential family](https://en.wikipedia.org/wiki/Exponential_family):
+  + Binomial for binary, TRUE/FALSE, PASS/FAIL
+  + Poisson for counts
+
+--
+
 + The link function transforms the data before fitting a model
 
 --
 
-+ Can't use OLS for this, so we use 'maximum-likelihood'
++ Can't use OLS for this, so we use 'maximum-likelihood' estimation, which is not exact.
 
 --
 
-+ Many of the methods for `lm` are common to `glm`, but we can't use R<sup>2</sup>
++ Many of the methods, and `R` function, for `lm` are common to `glm`, but we can't use R<sup>2</sup>
 
 --
 
@@ -370,16 +462,13 @@ Where $\mu$ is the expectation of Y, and $g$ is the link function
 
 ## Generalized Linear Models
 
-- `family` argument was set to `binomial` for binary outcomes.
-
-```{r glm1, collapse=TRUE, warning=FALSE, message=FALSE}
+```{r glm1, collapse=TRUE, warning=FALSE, message=FALSE, echo=TRUE}
 library(COUNT)
 data(medpar)
 
 glm_binomial <- glm(died ~ factor(age80) + los + factor(type), data=medpar, family="binomial")
 
 sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
-
 ModelMetrics::auc(glm_binomial)
 ```
 
@@ -387,13 +476,10 @@ ModelMetrics::auc(glm_binomial)
 
 ## Interactions
 
-- 'Interactions' are where predictor variables affect each other.
+- 'Interactions' are where predictor variables affect each other. Can add using `*` or `:` (check help for which to use)
 --
 
-- Can add these with `*` or `:` (check help for which to use)
---
-
-```{r glm2}
+```{r glm2, echo=TRUE}
 glm_binomial2 <- glm(died ~ factor(age80) * los + factor(type), data=medpar, family="binomial")
 
 sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
@@ -405,16 +491,18 @@ ModelMetrics::auc(glm_binomial2)
 # Interpretation
 
 + Our model coefficients in `lm` were straight-forward multipliers
-+ `glm` is similar, but it is on the scale of the link-function.
++ `glm` is similar, but it is on the scale of the ___link-function___.
  + log scale for `poisson` models, or logit (log odds) scale for `binomial`
-+ Common to transform output back to response scale
-+ giving Incident Rate Ratios for `poisson`, or Odds Ratios for `binomial`
++ It is common to transform outputs back to the original ('response') scale.
++ This gives Incident Rate Ratios for `poisson`, or Odds Ratios for `binomial`.
 
 ```{r coeftransform, warning=FALSE, message=FALSE}
 cbind(Link=coef(glm_binomial2), Response=exp(coef(glm_binomial2)))
 ```
 
+
 ---
+
 class: middle
 
 ## Exercise 3: Generalized Linear Model (GLM)
@@ -477,6 +565,13 @@ class: middle
 class: middle
 
 # Exercise 5: Predicting 10-year CHD risk in Framingham data
+
+---
+class: middle center
+
+![](https://imgs.xkcd.com/comics/correlation.png)
+
+https://xkcd.com/552/
 
 ```{css, echo=FALSE}
 @media print {

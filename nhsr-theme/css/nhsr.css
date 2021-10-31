@@ -51,7 +51,7 @@ hr {
 /*-- Footnote --*/
 .footnote {
   position:           absolute;
-  bottom:             2em;
+  bottom:             1em;
   padding-right:      4em;
   font-size:          60%;
   line-height:        1.2em;
@@ -66,11 +66,11 @@ hr {
 
 /*-- In-line highlighting within text --*/
 .remark-code, .remark-inline-code {
-  font-size:          90%;
+  font-size:          80%;
   font-weight:        400;
   color:              #231F20;
   background:         #E8EDEE;
-  border-radius:      3px;
+  border-radius:      2px;
   padding:            1px 1px 1px 1px;
 }
 
@@ -95,7 +95,7 @@ pre {
 /*--  --*/
 pre code {
   background:          none;
-  font-size:           18px !important;
+  font-size:           14px !important;
 }
 
 /*-- TABLES --*/
