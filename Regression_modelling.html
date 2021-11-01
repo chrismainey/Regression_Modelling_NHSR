@@ -446,8 +446,10 @@ class: middle
 ---
 class: middle center
 
-![XKCD commic saying linear regression can be rubbish](https://imgs.xkcd.com/comics/linear_regression.png)
-https://xkcd.com/1725/
+&lt;div class="figure"&gt;
+&lt;img src="https://imgs.xkcd.com/comics/linear_regression.png" alt="https://xkcd.com/1725/" width="70%" /&gt;
+&lt;p class="caption"&gt;https://xkcd.com/1725/&lt;/p&gt;
+&lt;/div&gt;
 
 ---
 
@@ -687,6 +689,14 @@ class: middle
 - We can then use our model to predict our expected `\(Y\)`:
 - Need to decide what scale to predict on: `link` or `response`
 
+
+```r
+library(dplyr)
+medpar$preds &lt;- predict(glm_binomial2, type="response")
+
+top_n(medpar,5) %&gt;% knitr::kable(format = "html")
+```
+
 &lt;table&gt;
  &lt;thead&gt;
   &lt;tr&gt;
@@ -785,8 +795,8 @@ class: middle
 - Lets see the 10 cases with the highest predicted risk of death:
 
 
-```
-## Selecting by preds
+```r
+medpar %&gt;% arrange(desc(preds)) %&gt;% top_n(10) %&gt;% knitr::kable(format = "html")
 ```
 
 &lt;table&gt;
@@ -988,9 +998,11 @@ class: middle
 ---
 class: middle center
 
-![](https://imgs.xkcd.com/comics/correlation.png)
+&lt;div class="figure"&gt;
+&lt;img src="https://imgs.xkcd.com/comics/correlation.png" alt="https://xkcd.com/552/" width="70%" /&gt;
+&lt;p class="caption"&gt;https://xkcd.com/552/&lt;/p&gt;
+&lt;/div&gt;
 
-https://xkcd.com/552/
 
 &lt;style type="text/css"&gt;
 @media print {
