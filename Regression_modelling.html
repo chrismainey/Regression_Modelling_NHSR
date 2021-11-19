@@ -377,7 +377,7 @@ So...
 
 A common check is to plot residuals:
 ![](Regression_modelling_files/figure-html/rplotsetup-1.png)&lt;!-- --&gt;
-
+---
 ## Regression diagnostics (2)
 
 A common check is to plot residuals:
@@ -674,6 +674,49 @@ ModelMetrics::auc(glm_binomial2)
 ## factor(type)3       0.96477095 2.6241865
 ## factor(age80)1:los  0.01450661 1.0146123
 ```
+
+---
+
+# Odds-what-now?
+
+Odds is a concept commonly used in statistics, but often misunderstood.  Lets' consider a '2 x 2 table':
+
+
+&lt;img src="./man/figures/2_by_2.png" width="60%" style="display: block; margin: auto;" /&gt;
+.pull-left[
+__Relative risk:__
++ _a / (a + b)_
++ _d / (c + d)_
+]
+
+.pull-right[
+__Odds:__
++ _a / b_
++ _c / d_
+]
+---
+
+# Odds Ratio
+.pull-left[
+&lt;img src="./man/figures/2_by_2_pt2.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+__Odds Ratio:__
++ _&lt;span style="color: red;"&gt;(a / b)&lt;/span&gt; / &lt;span style="color: blue;"&gt;( c / d)&lt;/span&gt;_
++ _=  &lt;span style="color: red;"&gt;a&lt;/span&gt;&lt;span style="color: blue;"&gt;d&lt;/span&gt; / &lt;span style="color: blue;"&gt;c&lt;/span&gt;&lt;span style="color: red;"&gt;b&lt;/span&gt;_
+
+&lt;br&gt;&lt;br&gt;
++ If odds ratio = 1, chance of outcome the same in each group
+
++ If odds ratio &gt;1  - greater chance of outcome in exposure group
+
++ If odds ratio &lt;1  - lesser chance of outcome in exposure group
+
+]
+
+&lt;br&gt;&lt;br&gt;
+
+Great explainer:  https://www.youtube.com/watch?v=ixKhS0Silb4
 
 
 ---
@@ -985,6 +1028,10 @@ class: middle
 
 - Generalized Linear Model (`glm`) allow linear models on a transformed scale, e.g. logistic regression for binary variables
 - Interactions terms allow us to examine confounded predictors
+
+--
+
+- Consider back-transforming GLM coefficients for interpretability (e.g. odds ratios)
 
 --
 
