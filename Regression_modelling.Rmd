@@ -1,9 +1,9 @@
 ---
 title: "Regression Modelling in `R`"
 subtitle: "A bit of theory and application"
-institute: "NHS England & NHS Improvement"
-date: "4/11/2021"
-author: "Chris Mainey - c.mainey@nhs.net"
+institute: "North Central London ICB"
+date: "24/11/2022"
+author: "Chris Mainey - c.mainey1@nhs.net"
 output:
   xaringan::moon_reader:
     css: 
@@ -30,7 +30,7 @@ ragg_png = function(..., res = 192) {
 knitr::opts_chunk$set(dev = "ragg_png", fig.ext = "png")
 library(knitr)
 library(tidyverse)
-library(nhsrtheme)
+library(NHSRtheme)
 library(xaringanExtra)
 library(ggforce)
 # set default options
@@ -435,11 +435,12 @@ knitr::include_graphics("https://imgs.xkcd.com/comics/linear_regression.png")
 
 $$\large{g(\mu)= \alpha + \beta x}$$
 <br>
-Where $\mu$ is the expectation of Y, and $g$ is the link function
+Where $\mu$ is the _expectation_ of $Y$, and $g$ is the link function
 
 --
 
 + We assume a distribution from the [Exponential family](https://en.wikipedia.org/wiki/Exponential_family):
+
   + Binomial for binary, TRUE/FALSE, PASS/FAIL
   + Poisson for counts
 
@@ -453,11 +454,7 @@ Where $\mu$ is the expectation of Y, and $g$ is the link function
 
 --
 
-+ Many of the methods, and `R` function, for `lm` are common to `glm`, but we can't use R<sup>2</sup>
-
---
-
-+ Other measures include AUC ('C-statistic'), and AIC or likelihood ratio tests.
++ Many of the methods, and `R` function, for `lm` are common to `glm`, but we can't use R<sup>2</sup>. Other measures include AUC ('C-statistic'), and AIC or likelihood ratio tests.
 
 ---
 
@@ -527,7 +524,7 @@ __Odds:__
 # Odds Ratio
 .pull-left[
 ```{r, echo=FALSE, out.width="100%", fig.align='center'}
-knitr::include_graphics("./man/figures/2_by_2_pt2.png")
+knitr::include_graphics("./man/figures/2_by_2_pt2.png", )
 ```
 ]
 .pull-right[

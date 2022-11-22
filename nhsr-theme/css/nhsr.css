@@ -175,3 +175,8 @@ blockquote {
 .pink       { color:   #AE2573 }
 .red        { color:   #DA291C }
 .warmyellow { color:   #FFB81C }
+
+/*-- Mathjax */
+.mjx-chtml {
+  font-size: 32px !important;
+}

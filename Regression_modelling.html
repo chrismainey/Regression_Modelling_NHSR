@@ -3,8 +3,8 @@
   <head>
     <title>Regression Modelling in R</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Chris Mainey - c.mainey@nhs.net" />
-    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <meta name="author" content="Chris Mainey - c.mainey1@nhs.net" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
@@ -54,9 +54,9 @@ top:1em;right:1em;
 # Regression Modelling in `R`
 ----
 ## **A bit of theory and application**
-### Chris Mainey - c.mainey@nhs.net 
+### Chris Mainey - c.mainey1@nhs.net 
 ### &lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#005EB8;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"&gt;&lt;/path&gt;&lt;/svg&gt;@chrismainey
-#### 4/11/2021
+#### 24/11/2022
 
 
 ---
@@ -461,11 +461,12 @@ class: middle center
 
 `$$\large{g(\mu)= \alpha + \beta x}$$`
 &lt;br&gt;
-Where `\(\mu\)` is the expectation of Y, and `\(g\)` is the link function
+Where `\(\mu\)` is the _expectation_ of `\(Y\)`, and `\(g\)` is the link function
 
 --
 
 + We assume a distribution from the [Exponential family](https://en.wikipedia.org/wiki/Exponential_family):
+
   + Binomial for binary, TRUE/FALSE, PASS/FAIL
   + Poisson for counts
 
@@ -479,11 +480,7 @@ Where `\(\mu\)` is the expectation of Y, and `\(g\)` is the link function
 
 --
 
-+ Many of the methods, and `R` function, for `lm` are common to `glm`, but we can't use R&lt;sup&gt;2&lt;/sup&gt;
-
---
-
-+ Other measures include AUC ('C-statistic'), and AIC or likelihood ratio tests.
++ Many of the methods, and `R` function, for `lm` are common to `glm`, but we can't use R&lt;sup&gt;2&lt;/sup&gt;. Other measures include AUC ('C-statistic'), and AIC or likelihood ratio tests.
 
 ---
 
@@ -1107,6 +1104,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable
