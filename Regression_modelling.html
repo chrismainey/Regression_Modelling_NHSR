@@ -125,9 +125,8 @@ Sometimes the effects of other variables interact/mask this (___"confounding"___
 
 --
 
-&lt;br&gt;
 &lt;center&gt;
-&lt;img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Correlation_examples2.svg" height="280" class="center"&gt;
+&lt;img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Correlation_examples2.svg" height="300" class="center"&gt;
 &lt;/center&gt;
 
 .footnote[
@@ -144,17 +143,9 @@ Lets check the correlation in our generated data:
 
 ```r
 cor(x, y)
-```
-
-```
 ## [1] 0.8650106
-```
 
-```r
 cor.test(x,y)
-```
-
-```
 ## 
 ## 	Pearson's product-moment correlation
 ## 
@@ -178,18 +169,17 @@ cor.test(x,y)
 
 Regression gives us more options than correlation:
 
-&lt;img src="Regression_modelling_files/figure-html/lm3-1.png" width="1800" style="display: block; margin: auto;" /&gt;
+&lt;img src="Regression_modelling_files/figure-html/lm3-1.png" width="1770" style="display: block; margin: auto;" /&gt;
 
 
 `$$y= \alpha + \beta x + \epsilon$$`
 
 ---
 
-
 ### Regression models (2)
 Zooming in...
-
-&lt;img src="Regression_modelling_files/figure-html/lm35-1.png" width="1800" style="display: block; margin: auto;" /&gt;
+ 
+&lt;img src="Regression_modelling_files/figure-html/lm35-1.png" width="1770" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -486,6 +476,18 @@ Where `\(\mu\)` is the _expectation_ of `\(Y\)`, and `\(g\)` is the link functio
 
 ## Generalized Linear Models
 
+Let's model the probably of death in a data set from US Medicaid. 
+
++ The data are in the `COUNT` package, and are called `medpar`
+
++ Load the library and use the `data()` function to load it.
+
+--
+
++ We'll use a `glm`, with a `binomial` distribution.
+
++ The `binomial` family automatically uses the `logit` link function: the log-odds of the event.
+
 
 ```r
 library(COUNT)
@@ -493,162 +495,94 @@ data(medpar)
 
 glm_binomial &lt;- glm(died ~ factor(age80) + los + factor(type), data=medpar, family="binomial")
 
-sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
-```
-
-&lt;table style="border-collapse:collapse; border:none;"&gt;
-&lt;tr&gt;
-&lt;th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; "&gt;&amp;nbsp;&lt;/th&gt;
-&lt;th colspan="5" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; "&gt;1=Died;0=Alive&lt;/th&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; "&gt;Predictors&lt;/td&gt;
-&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;Odds Ratios&lt;/td&gt;
-&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;std. Error&lt;/td&gt;
-&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;CI&lt;/td&gt;
-&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;p&lt;/td&gt;
-&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;df&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;(Intercept)&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.55&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.05&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.46&amp;nbsp;&amp;ndash;&amp;nbsp;0.67&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(age80)1&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.93&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.25&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.50&amp;nbsp;&amp;ndash;&amp;nbsp;2.48&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;Length of Stay&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.96&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.01&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.95&amp;nbsp;&amp;ndash;&amp;nbsp;0.98&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)2&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.52&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.22&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.14&amp;nbsp;&amp;ndash;&amp;nbsp;2.02&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.004&lt;/strong&gt;&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)3&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;2.61&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.60&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.66&amp;nbsp;&amp;ndash;&amp;nbsp;4.12&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;"&gt;Observations&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="5"&gt;1495&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;/table&gt;
-
-```r
 ModelMetrics::auc(glm_binomial)
 ## [1] 0.6372224
 ```
 
 ---
 
+
+```r
+summary(glm_binomial)
+## 
+## Call:
+## glm(formula = died ~ factor(age80) + los + factor(type), family = "binomial", 
+##     data = medpar)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.5312  -0.8830  -0.8032   1.2938   2.2568  
+## 
+## Coefficients:
+##                 Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)    -0.590949   0.097351  -6.070 1.28e-09 ***
+## factor(age80)1  0.656493   0.129180   5.082 3.73e-07 ***
+## los            -0.037483   0.007871  -4.762 1.92e-06 ***
+## factor(type)2   0.418704   0.144611   2.895  0.00379 ** 
+## factor(type)3   0.961028   0.230489   4.170 3.05e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 1922.9  on 1494  degrees of freedom
+## Residual deviance: 1857.8  on 1490  degrees of freedom
+## AIC: 1867.8
+## 
+## Number of Fisher Scoring iterations: 4
+```
+
+---
+
 ## Interactions
 
-- 'Interactions' are where predictor variables affect each other. Can add using `*` or `:` (check help for which to use)
++ 'Interactions' are where predictor variables affect each other. 
+
++ Allows us to separate effects into 
+
++ Can add using `*` or `:` (check help for which to use)
+
 --
 
 
 ```r
 glm_binomial2 &lt;- glm(died ~ factor(age80) * los + factor(type), data=medpar, family="binomial")
 
-sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
+ModelMetrics::auc(glm_binomial2)
+## [1] 0.6376572
 ```
 
-&lt;table style="border-collapse:collapse; border:none;"&gt;
-&lt;tr&gt;
-&lt;th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; "&gt;&amp;nbsp;&lt;/th&gt;
-&lt;th colspan="5" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; "&gt;1=Died;0=Alive&lt;/th&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; "&gt;Predictors&lt;/td&gt;
-&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;Odds Ratios&lt;/td&gt;
-&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;std. Error&lt;/td&gt;
-&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;CI&lt;/td&gt;
-&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;p&lt;/td&gt;
-&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;df&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;(Intercept)&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.57&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.06&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.47&amp;nbsp;&amp;ndash;&amp;nbsp;0.70&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(age80)1&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.69&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.35&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.13&amp;nbsp;&amp;ndash;&amp;nbsp;2.56&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.011&lt;/strong&gt;&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;Length of Stay&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.96&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.01&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.94&amp;nbsp;&amp;ndash;&amp;nbsp;0.98&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)2&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.52&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.22&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.14&amp;nbsp;&amp;ndash;&amp;nbsp;2.01&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.004&lt;/strong&gt;&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(type)3&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;2.62&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.61&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.67&amp;nbsp;&amp;ndash;&amp;nbsp;4.14&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;factor(age80)1:los&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;1.01&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.02&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.98&amp;nbsp;&amp;ndash;&amp;nbsp;1.05&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.419&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;Inf&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;"&gt;Observations&lt;/td&gt;
-&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="5"&gt;1495&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;/table&gt;
+---
 
 ```r
-ModelMetrics::auc(glm_binomial2)
-```
-
-```
-## [1] 0.6376572
+summary(glm_binomial2)
+## 
+## Call:
+## glm(formula = died ~ factor(age80) * los + factor(type), family = "binomial", 
+##     data = medpar)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.5174  -0.8889  -0.7916   1.2835   2.3110  
+## 
+## Coefficients:
+##                     Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)        -0.561604   0.104479  -5.375 7.65e-08 ***
+## factor(age80)1      0.525379   0.207818   2.528  0.01147 *  
+## los                -0.040738   0.008995  -4.529 5.93e-06 ***
+## factor(type)2       0.417439   0.144681   2.885  0.00391 ** 
+## factor(type)3       0.964771   0.231118   4.174 2.99e-05 ***
+## factor(age80)1:los  0.014507   0.017954   0.808  0.41909    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 1922.9  on 1494  degrees of freedom
+## Residual deviance: 1857.2  on 1489  degrees of freedom
+## AIC: 1869.2
+## 
+## Number of Fisher Scoring iterations: 4
 ```
 
 ---
@@ -661,6 +595,10 @@ ModelMetrics::auc(glm_binomial2)
 + It is common to transform outputs back to the original ('response') scale.
 + This gives Incident Rate Ratios for `poisson`, or Odds Ratios for `binomial`.
 
+
+```r
+cbind(Link=coef(glm_binomial2), Response=exp(coef(glm_binomial2)))
+```
 
 ```
 ##                           Link  Response
@@ -1046,15 +984,6 @@ class: middle center
 &lt;img src="https://imgs.xkcd.com/comics/correlation.png" alt="https://xkcd.com/552/" width="70%" /&gt;
 &lt;p class="caption"&gt;https://xkcd.com/552/&lt;/p&gt;
 &lt;/div&gt;
-
-
-&lt;style type="text/css"&gt;
-@media print {
-  .has-continuation {
-    display: block;
-  }
-}
-&lt;/style&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

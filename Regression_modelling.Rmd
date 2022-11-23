@@ -143,7 +143,7 @@ library(ggplot2)
 ```
 
 ## Example:
-```{r lm1, fig.align="center"}
+```{r lm1, fig.align="center",fig.width = 5.9, fig.height = 3}
 x <- rnorm(50, 10, 4)
 y <- runif(50, min = 0.5, 10) + (1.25*x)
 
@@ -164,9 +164,8 @@ a
 
 --
 
-<br>
 <center>
-<img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Correlation_examples2.svg" height="280" class="center">
+<img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Correlation_examples2.svg" height="300" class="center">
 </center>
 
 .footnote[
@@ -180,7 +179,7 @@ By DenisBoigelot, https://commons.wikimedia.org/w/index.php?curid=15165296 [Acce
 
 Lets check the correlation in our generated data:
 
-```{r correlation, echo = TRUE}
+```{r correlation, echo = TRUE, collapse=TRUE}
 cor(x, y)
 
 cor.test(x,y)
@@ -197,7 +196,7 @@ cor.test(x,y)
 
 Regression gives us more options than correlation:
 
-```{r lm3, fig.align="center", fig.retina=2, message=FALSE, warning=FALSE}
+```{r lm3, fig.align="center", fig.retina=2, message=FALSE, warning=FALSE,fig.width = 5.9, fig.height = 3}
 z <- lm(y~x)
 print(a<- a + geom_smooth(method="lm", col="red", linetype=2,fullrange=TRUE, se=FALSE))
 ```
@@ -207,11 +206,10 @@ $$y= \alpha + \beta x + \epsilon$$
 
 ---
 
-
 ### Regression models (2)
 Zooming in...
-
-```{r lm35, fig.align="center", fig.retina=2, message=FALSE, warning=FALSE}
+ 
+```{r lm35, fig.align="center", fig.retina=2, message=FALSE, warning=FALSE,fig.width = 5.9, fig.height = 3}
 z <- lm(y~x)
 print(a + geom_mark_circle(aes(y=5.4776 , x=0), col = "darkgoldenrod2", linetype="dashed",
              size=1.2)+
@@ -258,7 +256,7 @@ We are making some assumptions:
 + Sum would be zero, so we 'square' (^2) it, and minimise the _'sum of the squares'_
 --
 
-```{r lm2, fig.align="center", message=FALSE, warning=FALSE}
+```{r lm2, fig.align="center", message=FALSE, warning=FALSE, fig.width = 5.9, fig.height = 3}
 a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.4, arrow=arrow(length=unit(0.15,"cm")))
 ```
 
@@ -357,7 +355,7 @@ So...
 ## Regression diagnostics (1)
 
 A common check is to plot residuals:
-```{r rplotsetup, eval=TRUE}
+```{r rplotsetup, eval=TRUE, fig.width = 5.9, fig.height = 3}
 par(mfrow=c(1,2))
 plot(z, which = c(1:2))
 ```
@@ -365,7 +363,7 @@ plot(z, which = c(1:2))
 ## Regression diagnostics (2)
 
 A common check is to plot residuals:
-```{r rplotsetup2, eval=TRUE}
+```{r rplotsetup2, eval=TRUE, fig.width = 5.9, fig.height = 3}
 par(mfrow=c(1,2))
 plot(z, which = c(3:4))
 ```
@@ -460,28 +458,54 @@ Where $\mu$ is the _expectation_ of $Y$, and $g$ is the link function
 
 ## Generalized Linear Models
 
+Let's model the probably of death in a data set from US Medicaid. 
+
++ The data are in the `COUNT` package, and are called `medpar`
+
++ Load the library and use the `data()` function to load it.
+
+--
+
++ We'll use a `glm`, with a `binomial` distribution.
+
++ The `binomial` family automatically uses the `logit` link function: the log-odds of the event.
+
 ```{r glm1, collapse=TRUE, warning=FALSE, message=FALSE, echo=TRUE}
 library(COUNT)
 data(medpar)
 
 glm_binomial <- glm(died ~ factor(age80) + los + factor(type), data=medpar, family="binomial")
 
-sjPlot::tab_model(glm_binomial, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
 ModelMetrics::auc(glm_binomial)
+```
+
+---
+
+```{r glm2, collapse=TRUE, warning=FALSE, message=FALSE, echo=TRUE}
+summary(glm_binomial)
 ```
 
 ---
 
 ## Interactions
 
-- 'Interactions' are where predictor variables affect each other. Can add using `*` or `:` (check help for which to use)
++ 'Interactions' are where predictor variables affect each other. 
+
++ Allows us to separate effects into 
+
++ Can add using `*` or `:` (check help for which to use)
+
 --
 
-```{r glm2, echo=TRUE}
+```{r glm3, collapse=TRUE, warning=FALSE, message=FALSE, echo=TRUE}
 glm_binomial2 <- glm(died ~ factor(age80) * los + factor(type), data=medpar, family="binomial")
 
-sjPlot::tab_model(glm_binomial2, show.df = TRUE, show.obs = TRUE, show.se = TRUE, show.r2 = FALSE)
 ModelMetrics::auc(glm_binomial2)
+```
+
+---
+```{r glm4, collapse=TRUE, warning=FALSE, message=FALSE, echo=TRUE}
+summary(glm_binomial2)
 ```
 
 ---
@@ -494,7 +518,7 @@ ModelMetrics::auc(glm_binomial2)
 + It is common to transform outputs back to the original ('response') scale.
 + This gives Incident Rate Ratios for `poisson`, or Odds Ratios for `binomial`.
 
-```{r coeftransform, warning=FALSE, message=FALSE}
+```{r coeftransform, echo=TRUE, message=FALSE, warning=FALSE}
 cbind(Link=coef(glm_binomial2), Response=exp(coef(glm_binomial2)))
 ```
 
@@ -559,7 +583,7 @@ class: middle
 - We can then use our model to predict our expected $Y$:
 - Need to decide what scale to predict on: `link` or `response`
 
-```{r glm3, warning=FALSE, message=FALSE, echo=TRUE}
+```{r pred1, warning=FALSE, message=FALSE, echo=TRUE}
 library(dplyr)
 medpar$preds <- predict(glm_binomial2, type="response")
 
@@ -572,7 +596,7 @@ top_n(medpar,5) %>% knitr::kable(format = "html")
 
 - Lets see the 10 cases with the highest predicted risk of death:
 
-```{r glm4, echo=TRUE, message=FALSE}
+```{r pred2, echo=TRUE, message=FALSE}
 medpar %>% arrange(desc(preds)) %>% top_n(10) %>% knitr::kable(format = "html")
 ```
 
@@ -620,13 +644,4 @@ class: middle center
 
 ```{r, echo=FALSE, out.width="70%", fig.cap="https://xkcd.com/552/"}
 knitr::include_graphics("https://imgs.xkcd.com/comics/correlation.png")
-```
-
-
-```{css, echo=FALSE}
-@media print {
-  .has-continuation {
-    display: block;
-  }
-}
 ```

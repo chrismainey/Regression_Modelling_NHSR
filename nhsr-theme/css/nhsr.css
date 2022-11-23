@@ -10,6 +10,16 @@ a:hover {
 }
 
 /*-- HEADINGS --*/
+
+.compressed {
+  color:              #005EB8;
+  font-size:          25px;
+  line-height:        1em;
+  margin-block-start: 0.4em;
+  margin-block-end:   0em;
+}
+  
+}
 .remark-slide-content h1 {
   color:              #005EB8;
   font-size:          45px;
@@ -28,7 +38,7 @@ a:hover {
 }
 
 li{
-   line-height:        1.5em;
+   line-height:        1.4em;
 }
 
 /*-- PARAGRAPH TEXT --*/
@@ -66,7 +76,7 @@ hr {
 
 /*-- In-line highlighting within text --*/
 .remark-code, .remark-inline-code {
-  font-size:          80%;
+  font-size:          75%;
   font-weight:        400;
   color:              #231F20;
   background:         #E8EDEE;
