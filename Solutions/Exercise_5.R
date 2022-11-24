@@ -40,24 +40,3 @@ CHDrisk <- glm(TenYearCHD ~  factor(male) + factor(currentSmoker)+ age  +
 
 ModelMetrics::auc(CHDrisk)
 summary(CHDrisk)
-
-
-library(randomForest)
-
-dt2 <-  framingham[c('male', 'currentSmoker', 'age', 'glucose', 'sysBP', 'diabetes',
-                     'prevalentStroke', 'prevalentHyp', 'totChol','TenYearCHD')] 
-
-
-dt2 <- na.omit(dt2)
-
-b <- model.matrix(TenYearCHD ~  factor(male) + factor(currentSmoker)+ age  +
-                     glucose + sysBP + factor(diabetes) + factor(prevalentStroke) +
-                     factor(prevalentHyp) + totChol, 
-                   data = dt2)
-
-a <- randomForest(b[,!names(b) %in% "TenYearCHD"], family = "binomial", na.action = na.omit)
-
-c <- b[,!names(b) %in% "TenYearCHD"]
-summary(framingham$TenYearCHD)
-
-ModelMetrics::auc(a)
