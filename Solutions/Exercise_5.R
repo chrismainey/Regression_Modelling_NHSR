@@ -1,7 +1,7 @@
 ### Examining Framingham data
 
 #The Framingham Heart disease study is a long-standing cohort study that is responsible for 
-#much of what we know about heart dieases and associated conditions.  For more info, see:
+#much of what we know about heart diseases and associated conditions.  For more info, see:
 #https://en.wikipedia.org/wiki/Framingham_Heart_Study
 
 # We are going to use regression to investigate some of it:

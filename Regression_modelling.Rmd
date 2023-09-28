@@ -265,8 +265,8 @@ a + geom_segment(aes(xend=c(x), yend=c(z)), size=0.4, arrow=arrow(length=unit(0.
 ## Regression models (3)
 
 So now let's create a linear regression model.  I prefer to create them as objects so I can use them again later.  Let's call this one _model1_.  That's fairly bad naming, but oh well....
-<br><br>
-Let's we have a data.frame called _mydata_ and columns called _Y_ (that we are predicting) using a column called _X_
+<br><br><br>
+Let's say we have a data.frame called _mydata_ and columns called _Y_ (that we are predicting) using a column called _X_
 
 ```{r lm2a, eval=FALSE, echo=TRUE}
 model1 <- lm(Y ~ X, data = mydata)

@@ -4,7 +4,7 @@
     <title>Regression Modelling in R</title>
     <meta charset="utf-8" />
     <meta name="author" content="Chris Mainey - c.mainey1@nhs.net" />
-    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
@@ -224,8 +224,8 @@ We are making some assumptions:
 ## Regression models (3)
 
 So now let's create a linear regression model.  I prefer to create them as objects so I can use them again later.  Let's call this one _model1_.  That's fairly bad naming, but oh well....
-&lt;br&gt;&lt;br&gt;
-Let's we have a data.frame called _mydata_ and columns called _Y_ (that we are predicting) using a column called _X_
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+Let's say we have a data.frame called _mydata_ and columns called _Y_ (that we are predicting) using a column called _X_
 
 
 ```r
@@ -509,10 +509,6 @@ summary(glm_binomial)
 ## glm(formula = died ~ factor(age80) + los + factor(type), family = "binomial", 
 ##     data = medpar)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.5312  -0.8830  -0.8032   1.2938   2.2568  
-## 
 ## Coefficients:
 ##                 Estimate Std. Error z value Pr(&gt;|z|)    
 ## (Intercept)    -0.590949   0.097351  -6.070 1.28e-09 ***
@@ -560,10 +556,6 @@ summary(glm_binomial2)
 ## Call:
 ## glm(formula = died ~ factor(age80) * los + factor(type), family = "binomial", 
 ##     data = medpar)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.5174  -0.8889  -0.7916   1.2835   2.3110  
 ## 
 ## Coefficients:
 ##                     Estimate Std. Error z value Pr(&gt;|z|)    
